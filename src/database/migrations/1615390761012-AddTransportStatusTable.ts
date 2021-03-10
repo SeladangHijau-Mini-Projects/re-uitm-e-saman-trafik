@@ -20,6 +20,7 @@ export class AddTransportStatusTable1615390761012
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

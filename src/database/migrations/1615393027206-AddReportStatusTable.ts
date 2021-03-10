@@ -19,6 +19,7 @@ export class AddReportStatusTable1615393027206 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

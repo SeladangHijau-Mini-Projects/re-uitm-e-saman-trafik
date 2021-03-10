@@ -40,6 +40,7 @@ export class AddUserTable1615391391781 implements MigrationInterface {
                     {
                         name: 'phone_tel_no',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'office_tel_no',

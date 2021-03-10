@@ -19,6 +19,7 @@ export class AddCollegeTable1615390897279 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

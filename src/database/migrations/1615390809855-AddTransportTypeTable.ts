@@ -19,6 +19,7 @@ export class AddTransportTypeTable1615390809855 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

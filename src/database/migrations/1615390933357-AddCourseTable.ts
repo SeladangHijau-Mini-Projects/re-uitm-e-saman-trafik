@@ -28,6 +28,7 @@ export class AddCourseTable1615390933357 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

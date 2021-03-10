@@ -19,6 +19,7 @@ export class AddUserRankTable1615390049046 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

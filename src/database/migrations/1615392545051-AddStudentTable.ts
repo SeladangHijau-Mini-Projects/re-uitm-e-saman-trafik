@@ -30,7 +30,7 @@ export class AddStudentTable1615392545051 implements MigrationInterface {
                         type: 'varchar',
                     },
                     {
-                        name: 'name',
+                        name: 'fullname',
                         type: 'varchar',
                     },
                     {

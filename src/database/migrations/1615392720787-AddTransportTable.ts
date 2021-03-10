@@ -20,6 +20,7 @@ export class AddTransportTable1615392720787 implements MigrationInterface {
                     {
                         name: 'student_id',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'type_id',

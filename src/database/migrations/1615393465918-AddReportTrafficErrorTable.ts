@@ -25,10 +25,12 @@ export class AddReportTrafficErrorTable1615393465918
                     {
                         name: 'traffic_error_id',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'other_value',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

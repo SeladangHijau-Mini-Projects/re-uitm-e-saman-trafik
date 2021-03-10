@@ -20,6 +20,7 @@ export class AddTrafficErrorTable1615391140768 implements MigrationInterface {
                     {
                         name: 'group_id',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'name',
@@ -28,6 +29,7 @@ export class AddTrafficErrorTable1615391140768 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

@@ -19,6 +19,7 @@ export class AddFacultyTable1615390848976 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',
