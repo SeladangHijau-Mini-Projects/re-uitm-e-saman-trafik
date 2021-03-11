@@ -15,6 +15,7 @@ export class AddStudentTable1615392545051 implements MigrationInterface {
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {

@@ -10,6 +10,7 @@ export class AddUserRankTable1615390049046 implements MigrationInterface {
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {

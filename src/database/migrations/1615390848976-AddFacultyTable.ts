@@ -10,6 +10,7 @@ export class AddFacultyTable1615390848976 implements MigrationInterface {
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {
