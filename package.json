@@ -23,7 +23,7 @@
     "typeorm:migrate-create": "node --require ts-node/register ./node_modules/typeorm/cli.js migration:create -d src/database/migrations -n",
     "typeorm:migrate-rollback": "node --require ts-node/register ./node_modules/typeorm/cli.js migration:revert",
     "typeorm:migrate": "node --require ts-node/register ./node_modules/typeorm/cli.js migration:run",
-    "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run typeorm:migrate && npm run build "
+    "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run typeorm:migrate && npm run build"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
