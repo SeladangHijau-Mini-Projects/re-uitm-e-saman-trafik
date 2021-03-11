@@ -53,7 +53,7 @@ async function bootstrap(): Promise<void> {
         initSwagger(app);
     }
 
-    await app.listen(process.env.APP_PORT);
+    await app.listen(process.env.PORT || 3000);
 }
 
 envValidator(requiredEnvKeys); // to ensure all the env required fill in. Error thrown if missing keys
