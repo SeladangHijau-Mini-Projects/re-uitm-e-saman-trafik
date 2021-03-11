@@ -8,7 +8,7 @@ const isUseMongo = process.env.DB_TYPE === 'mongodb';
 // ** YOUR ONLY NEED TO ADD YOUR KEY HERE **
 const appRequireKeys = ['APP_TIMEZONE'];
 
-const commonRequiredKeys = ['APP_NAME', 'PORT', 'APP_NAMESPACE', 'NODE_ENV'];
+const commonRequiredKeys = ['APP_NAME', 'APP_NAMESPACE', 'NODE_ENV', 'PORT'];
 
 // mysql env required keys.
 // ** DO NOT CHANGE IF NOT NECESSARY **
