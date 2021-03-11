@@ -11,6 +11,7 @@ export class AddTransportStatusTable1615390761012
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {

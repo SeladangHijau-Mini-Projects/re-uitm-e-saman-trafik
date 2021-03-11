@@ -10,6 +10,7 @@ export class AddTransportTypeTable1615390809855 implements MigrationInterface {
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {

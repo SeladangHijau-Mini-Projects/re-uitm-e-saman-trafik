@@ -10,6 +10,7 @@ export class AddReportStatusTable1615393027206 implements MigrationInterface {
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {

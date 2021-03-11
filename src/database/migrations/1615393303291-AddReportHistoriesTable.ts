@@ -16,6 +16,7 @@ export class AddReportHistoriesTable1615393303291
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {

@@ -16,6 +16,7 @@ export class AddReportTrafficErrorTable1615393465918
                         name: 'id',
                         type: 'int',
                         isPrimary: true,
+                        isGenerated: true,
                         generationStrategy: 'increment',
                     },
                     {
