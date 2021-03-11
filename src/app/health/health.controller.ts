@@ -6,7 +6,8 @@ import {
 } from '@nestjs/terminus';
 import { HealthCheckResult } from '@nestjs/terminus/dist/health-check';
 import { AppLogger } from '../../common/logger/logger.service';
-@Controller('health')
+
+@Controller()
 export class HealthController {
     constructor(
         private readonly health: HealthCheckService,
