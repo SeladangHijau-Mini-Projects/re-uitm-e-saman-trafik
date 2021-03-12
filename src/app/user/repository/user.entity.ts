@@ -51,9 +51,9 @@ export class UserEntity {
 
     @OneToOne(() => UserRankEntity, { eager: true })
     @JoinColumn({ name: 'id' })
-    rank: UserRankEntity;
+    userRank: UserRankEntity;
 
     @OneToOne(() => UserTypeEntity, { eager: true })
     @JoinColumn({ name: 'id' })
-    type: UserTypeEntity;
+    userType: UserTypeEntity;
 }
