@@ -13,6 +13,10 @@ const routes: Routes = [
                 path: '/health',
                 module: HealthModule,
             },
+            {
+                path: '/user',
+                module: UserModule,
+            },
         ],
     },
 ];
