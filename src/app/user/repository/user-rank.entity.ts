@@ -1,11 +1,5 @@
 import { Expose } from 'class-transformer';
-import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    PrimaryColumn,
-    UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('user_ranks')
 export class UserRankEntity {
@@ -21,11 +15,11 @@ export class UserRankEntity {
     @Expose()
     description: string;
 
-    @CreateDateColumn()
+    @Column({ name: 'created_at' })
     @Expose()
     createdAt: Date;
 
-    @UpdateDateColumn()
+    @Column({ name: 'updated_at' })
     @Expose()
     updatedAt: Date;
 }
