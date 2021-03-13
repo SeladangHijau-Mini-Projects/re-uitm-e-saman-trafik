@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RouterModule, Routes } from 'nest-router';
 import { DatabaseModule } from '../database/database.module';
 import { HealthModule } from './health/health.module';
+import { UserModule } from './user/user.module';
 
 const routes: Routes = [
     {
@@ -11,6 +12,10 @@ const routes: Routes = [
             {
                 path: '/health',
                 module: HealthModule,
+            },
+            {
+                path: '/user',
+                module: UserModule,
             },
         ],
     },
@@ -22,6 +27,7 @@ const routes: Routes = [
         ConfigModule.forRoot({ isGlobal: true }),
         DatabaseModule,
         HealthModule,
+        UserModule,
     ],
 })
 export class AppModule {}

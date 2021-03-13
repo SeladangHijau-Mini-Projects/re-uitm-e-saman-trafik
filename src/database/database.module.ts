@@ -18,7 +18,7 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
                     username: configService.get<string>('MYSQL_USERNAME'),
                     password: configService.get<string>('MYSQL_PASSWORD'),
                     database: configService.get<string>('MYSQL_DATABASE'),
-                    entities: ['dist/**/**/*.model{.ts,.js}'],
+                    entities: ['dist/**/**/*.entity{.ts,.js}'],
                     logging: true,
                 };
             },
