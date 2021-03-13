@@ -10,7 +10,7 @@ import { UserRank } from '../enum/user-rank.enum';
 import { UserType } from '../enum/user-type.enum';
 
 export class UpdateUserDto {
-    @ApiProperty({ description: 'User rank', enum: UserRank, example: 'ur1' })
+    @ApiProperty({ description: 'User rank', enum: UserRank, example: 'UR1' })
     @IsEnum(UserRank)
     @IsOptional()
     readonly rank: string;
@@ -45,5 +45,6 @@ export class UpdateUserDto {
         example: true,
     })
     @IsBoolean()
+    @IsOptional()
     readonly firstTimer: boolean;
 }
