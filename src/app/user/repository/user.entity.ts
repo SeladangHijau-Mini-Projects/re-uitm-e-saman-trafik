@@ -50,10 +50,10 @@ export class UserEntity {
     updatedAt: Date;
 
     @OneToOne(() => UserRankEntity, { eager: true })
-    @JoinColumn({ name: 'id' })
+    @JoinColumn({ name: 'rank_id' })
     userRank: UserRankEntity;
 
     @OneToOne(() => UserTypeEntity, { eager: true })
-    @JoinColumn({ name: 'id' })
+    @JoinColumn({ name: 'type_id' })
     userType: UserTypeEntity;
 }

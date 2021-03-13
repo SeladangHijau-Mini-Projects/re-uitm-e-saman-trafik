@@ -35,8 +35,6 @@ export class UserService {
             firstTimer: true,
         } as UserEntity);
 
-        return this.userRepository.findOne(newUser.id, {
-            relations: ['userRank', 'userType'],
-        });
+        return this.userRepository.findOne(newUser.id);
     }
 }
