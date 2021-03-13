@@ -51,7 +51,7 @@ export class UserService {
             rank = await this.userRankRepository.findOne({ name: dto.rank });
         }
         if (dto.type) {
-            type = await this.userRankRepository.findOne({ name: dto.type });
+            type = await this.userTypeRepository.findOne({ name: dto.type });
         }
 
         return this.userRepository.save(
@@ -64,8 +64,8 @@ export class UserService {
                 phoneTelNo: dto?.phoneTelNo ?? user.phoneTelNo,
                 officeTelNo: dto?.officeTelNo ?? user.officeTelNo,
                 firstTimer: dto?.firstTimer ?? user.firstTimer,
-                userRank: user.userRank,
-                userType: user.userType,
+                userRank: rank ?? user.userRank,
+                userType: type ?? user.userType,
             } as UserEntity,
             { reload: true },
         );
