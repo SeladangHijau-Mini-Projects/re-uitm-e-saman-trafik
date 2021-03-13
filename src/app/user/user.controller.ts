@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Get,
     Param,
     ParseIntPipe,
     Post,
@@ -16,6 +17,19 @@ import { UserService } from './user.service';
 @Controller()
 export class UserController {
     constructor(private readonly userService: UserService) {}
+
+    @Get(':userId')
+    async findOne(
+        @Param('userId', ParseIntPipe) userId: number,
+    ): Promise<UserDto> {
+        const user = await this.userService.findOne(userId);
+
+        if (!user) {
+            throw new ResourceNotFoundException('User ID was not found.');
+        }
+
+        return UserDto.fromModel(user);
+    }
 
     @Post()
     async create(@Body() body: CreateUserDto): Promise<UserDto> {
