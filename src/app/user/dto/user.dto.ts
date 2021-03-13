@@ -57,6 +57,7 @@ export class UserDto {
             fullname: model?.fullname,
             phoneTelNo: model?.phoneTelNo,
             officeTelNo: model?.officeTelNo,
+            firstTimer: model?.firstTimer,
         } as UserDto;
     }
 }
