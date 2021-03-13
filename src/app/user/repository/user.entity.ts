@@ -1,11 +1,17 @@
 import { Expose } from 'class-transformer';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserRankEntity } from './user-rank.entity';
 import { UserTypeEntity } from './user-type.entity';
 
 @Entity('users')
 export class UserEntity {
-    @PrimaryColumn({ name: 'id' })
+    @PrimaryGeneratedColumn({ name: 'id' })
     @Expose()
     id: number;
 
