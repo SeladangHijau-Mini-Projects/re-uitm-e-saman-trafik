@@ -30,7 +30,7 @@ export class UserService {
         const rank = await this.userRankRepository.findOne({ name: dto.rank });
         const type = await this.userTypeRepository.findOne({ name: dto.type });
 
-        const newUser = await this.userRepository.save({
+        return this.userRepository.save({
             rankId: rank.id,
             typeId: type.id,
             userCode: dto.userCode,
@@ -38,9 +38,9 @@ export class UserService {
             phoneTelNo: dto.phoneTelNo,
             officeTelNo: dto.officeTelNo,
             firstTimer: true,
+            userRank: rank,
+            userType: type,
         } as UserEntity);
-
-        return this.userRepository.findOne(newUser.id);
     }
 
     async update(user: UserEntity, dto: UpdateUserDto): Promise<UserEntity> {
@@ -54,7 +54,7 @@ export class UserService {
             type = await this.userRankRepository.findOne({ name: dto.type });
         }
 
-        await this.userRepository.save(
+        return this.userRepository.save(
             {
                 id: user.id,
                 rankId: rank?.id ?? user.rankId,
@@ -64,10 +64,10 @@ export class UserService {
                 phoneTelNo: dto?.phoneTelNo ?? user.phoneTelNo,
                 officeTelNo: dto?.officeTelNo ?? user.officeTelNo,
                 firstTimer: dto?.firstTimer ?? user.firstTimer,
+                userRank: user.userRank,
+                userType: user.userType,
             } as UserEntity,
             { reload: true },
         );
-
-        return this.userRepository.findOne(user.id);
     }
 }
