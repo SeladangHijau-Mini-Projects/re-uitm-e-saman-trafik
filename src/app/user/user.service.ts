@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { QueryParamUserDto } from './dto/query-param-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserQueryFilter } from './query-filter/user.query-filter';
 import { UserRankEntity } from './repository/user-rank.entity';
 import { UserTypeEntity } from './repository/user-type.entity';
 import { UserEntity } from './repository/user.entity';
@@ -17,6 +19,33 @@ export class UserService {
         @InjectRepository(UserRankEntity)
         private readonly userRankRepository: Repository<UserRankEntity>,
     ) {}
+
+    async findAll(dto: QueryParamUserDto): Promise<UserEntity[]> {
+        if (dto.rank) {
+            const rank = await this.userRankRepository.findOne({
+                name: dto.rank,
+            });
+
+            dto = {
+                ...dto,
+                rankId: rank.id,
+            } as QueryParamUserDto;
+        }
+        if (dto.type) {
+            const type = await this.userTypeRepository.findOne({
+                name: dto.type,
+            });
+
+            dto = {
+                ...dto,
+                typeId: type.id,
+            } as QueryParamUserDto;
+        }
+
+        const queryFilter = new UserQueryFilter(dto);
+
+        return this.userRepository.find(queryFilter.toTypeormQuery());
+    }
 
     async findOne(userId: number): Promise<UserEntity> {
         return this.userRepository.findOne(userId);
