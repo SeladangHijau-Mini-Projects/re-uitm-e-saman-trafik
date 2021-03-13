@@ -67,6 +67,7 @@ export class UserService {
             phoneTelNo: dto.phoneTelNo,
             officeTelNo: dto.officeTelNo,
             firstTimer: true,
+            password: 'New Password', // TODO: need to give default value
             userRank: rank,
             userType: type,
         } as UserEntity);
