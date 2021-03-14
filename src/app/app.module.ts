@@ -4,6 +4,7 @@ import { RouterModule, Routes } from 'nest-router';
 import { DatabaseModule } from '../database/database.module';
 import { HealthModule } from './health/health.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 const routes: Routes = [
     {
@@ -12,6 +13,10 @@ const routes: Routes = [
             {
                 path: '/health',
                 module: HealthModule,
+            },
+            {
+                path: '/auth',
+                module: AuthModule,
             },
             {
                 path: '/user',
@@ -28,6 +33,7 @@ const routes: Routes = [
         DatabaseModule,
         HealthModule,
         UserModule,
+        AuthModule,
     ],
 })
 export class AppModule {}
