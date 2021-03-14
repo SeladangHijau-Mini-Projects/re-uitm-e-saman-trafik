@@ -1,6 +1,7 @@
 import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
+import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { UnauthorizedException } from 'src/common/exception/unauthorized.exception';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
@@ -47,7 +48,7 @@ export class AuthController {
         }
 
         const newUser = await this.userService.create(body);
-        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newUser.id}`; // TODO: need to generate a correct URL for reset password
+        const resetPasswordUrl = `${process.env.HOST}/v1/auth/forgot-password/${newUser.id}`; // TODO: need to generate a correct URL for reset password
 
         return {
             id: newUser.id,
@@ -63,6 +64,10 @@ export class AuthController {
     ): Promise<LoggedInDto> {
         const user = await this.userService.findOne(userId);
 
+        if (!user) {
+            throw new ResourceNotFoundException('User ID not found.');
+        }
+
         if (body.password != body.confirmPassword) {
             throw new InvalidValueException(
                 `Both password & confirmPassword field is not equal.`,
@@ -76,6 +81,7 @@ export class AuthController {
 
         const updatedUser = await this.userService.update(user, {
             password: body.password,
+            firstTimer: false,
         } as UpdateUserDto);
         const userToken = this.authService.generateToken(
             updatedUser.id,
