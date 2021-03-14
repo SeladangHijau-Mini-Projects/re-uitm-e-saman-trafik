@@ -1,4 +1,4 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe, INestApplication } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptor/transformer.interceptor';
@@ -6,7 +6,6 @@ import envValidator from './common/util/env-validator';
 import { requiredEnvKeys } from './required-env';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
-import { AuthGuard } from './common/guard/auth.guard';
 import { ResponseDTO } from './common/dto/response.dto';
 
 /**
@@ -44,7 +43,6 @@ async function bootstrap(): Promise<void> {
 
     app.useGlobalInterceptors(new TransformInterceptor());
     app.useGlobalFilters(new HttpExceptionFilter());
-    app.useGlobalGuards(new AuthGuard(app.get(Reflector)));
     app.enableCors();
     app.enableShutdownHooks(); // Starts listening for shutdown hooks
 
