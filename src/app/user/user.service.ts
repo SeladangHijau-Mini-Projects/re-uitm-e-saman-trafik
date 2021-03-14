@@ -90,6 +90,7 @@ export class UserService {
                 rankId: rank?.id ?? user.rankId,
                 typeId: type?.id ?? user.typeId,
                 userCode: dto?.userCode ?? user.userCode,
+                password: dto?.password ?? user.password,
                 fullname: dto?.fullname ?? user.fullname,
                 phoneTelNo: dto?.phoneTelNo ?? user.phoneTelNo,
                 officeTelNo: dto?.officeTelNo ?? user.officeTelNo,
