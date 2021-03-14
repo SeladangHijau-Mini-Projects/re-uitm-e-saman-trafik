@@ -2,6 +2,9 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
+import { TokenInvalidException } from '../exception/token-invalid.exception';
+import { TokenMissingException } from '../exception/token-missing.exception';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -20,31 +23,28 @@ export class AuthGuard implements CanActivate {
 
     // eslint-disable-next-line @typescript-eslint/typedef
     validateRequest(request): boolean {
-        return true;
+        if (process.env.NODE_ENV == 'development') {
+            request['user'] = {
+                userId: 1,
+                userType: 'admin',
+            };
+            return true;
+        }
 
-        // TODO: extend this function for authorization process
-        // if (process.env.NODE_ENV == 'development') {
-        //     request['user'] = {
-        //         userId: '1',
-        //         type: 'dealer',
-        //     };
-        //     return true;
-        // }
+        if (!request.headers['authorization']) {
+            throw new TokenMissingException();
+        }
 
-        // if (!request.headers['x-auth-user-data']) {
-        //     throw new TokenMissingException();
-        // }
+        try {
+            const user = jwt.verify(
+                request.headers['authorization'],
+                process.env.APP_API_SECRET,
+            );
 
-        // try {
-        //     const user = jwt.verify(
-        //         request.headers['x-auth-user-data'],
-        //         process.env.INTERNAL_API_SECRET,
-        //     );
-
-        //     request['user'] = user;
-        //     return true;
-        // } catch (e) {
-        //     throw new TokenInvalidException();
-        // }
+            request['user'] = user;
+            return true;
+        } catch (e) {
+            throw new TokenInvalidException();
+        }
     }
 }
