@@ -25,6 +25,14 @@ export class UpdateUserDto {
     @IsOptional()
     readonly userCode: string;
 
+    @ApiProperty({
+        description: 'User password',
+        example: 'newpassword',
+    })
+    @IsString()
+    @IsOptional()
+    readonly password: string;
+
     @ApiProperty({ description: 'User full name', example: 'John Doe' })
     @IsString()
     @IsOptional()
