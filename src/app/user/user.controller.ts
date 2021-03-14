@@ -7,15 +7,18 @@ import {
     Post,
     Put,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
+import { AuthGuard } from 'src/common/guard/auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { QueryParamUserDto } from './dto/query-param-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
+@UseGuards(AuthGuard)
 @Controller()
 export class UserController {
     constructor(private readonly userService: UserService) {}
