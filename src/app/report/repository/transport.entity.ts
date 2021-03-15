@@ -1,0 +1,53 @@
+import { Expose } from 'class-transformer';
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { TransportStatusEntity } from './transport-status.entity';
+import { TransportTypeEntity } from './transport-type.entity';
+
+@Entity('transports')
+export class TransportEntity {
+    @PrimaryGeneratedColumn()
+    @Expose()
+    id: number;
+
+    @Column({ name: 'student_id' })
+    @Expose()
+    studentId: number; // TODO: create relationship for this
+
+    @Column({ name: 'type_id' })
+    @Expose()
+    typeId: number;
+
+    @Column({ name: 'status_id' })
+    @Expose()
+    statusId: number;
+
+    @Column({ name: 'plate_no' })
+    @Expose()
+    plateNo: string;
+
+    @Column({ name: 'pass_code' })
+    @Expose()
+    passCode: string;
+
+    @Column({ name: 'created_at' })
+    @Expose()
+    createdAt: Date;
+
+    @Column({ name: 'updated_at' })
+    @Expose()
+    updatedAt: Date;
+
+    @OneToOne(() => TransportTypeEntity, { eager: true })
+    @JoinColumn({ name: 'type_id' })
+    type: TransportTypeEntity;
+
+    @OneToOne(() => TransportStatusEntity, { eager: true })
+    @JoinColumn({ name: 'status_id' })
+    status: TransportStatusEntity;
+}
