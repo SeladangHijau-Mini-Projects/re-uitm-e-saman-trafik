@@ -4,15 +4,12 @@ import {
     Get,
     Param,
     ParseIntPipe,
-    Post,
     Put,
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { ExistsException } from 'src/common/exception/exists.exception';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { AuthGuard } from 'src/common/guard/auth.guard';
-import { CreateUserDto } from './dto/create-user.dto';
 import { QueryParamUserDto } from './dto/query-param-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
@@ -41,21 +38,6 @@ export class UserController {
         }
 
         return UserDto.fromModel(user);
-    }
-
-    @Post()
-    async create(@Body() body: CreateUserDto): Promise<UserDto> {
-        const existingUser = await this.userService.findOneByUserCode(
-            body.userCode,
-        );
-
-        if (existingUser) {
-            throw new ExistsException('User code exist.');
-        }
-
-        const newUser = await this.userService.create(body);
-
-        return UserDto.fromModel(newUser);
     }
 
     @Put(':userId')
