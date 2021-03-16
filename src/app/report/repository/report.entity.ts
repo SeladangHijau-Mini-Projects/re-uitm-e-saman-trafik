@@ -1,13 +1,17 @@
 import { Expose } from 'class-transformer';
+import { TransportEntity } from 'src/app/transport/repository/transport.entity';
+import { UserEntity } from 'src/app/user/repository/user.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    ManyToOne,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ReportHistoryEntity } from './report-history.entity';
 import { ReportStatusEntity } from './report-status.entity';
-import { TransportEntity } from './transport.entity';
 
 @Entity('reports')
 export class ReportEntity {
@@ -25,7 +29,7 @@ export class ReportEntity {
 
     @Column({ name: 'user_id' })
     @Expose()
-    userId: number; // TODO: create relationship for this
+    userId: number;
 
     @Column({ name: 'location' })
     @Expose()
@@ -46,4 +50,15 @@ export class ReportEntity {
     @OneToOne(() => TransportEntity, { eager: true })
     @JoinColumn({ name: 'transport_id' })
     transport: TransportEntity;
+
+    @OneToMany(
+        () => ReportHistoryEntity,
+        (history: ReportHistoryEntity) => history.report,
+    )
+    @JoinColumn({ name: 'id' })
+    histories: ReportHistoryEntity[];
+
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({ name: 'id' })
+    user: UserEntity;
 }

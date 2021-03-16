@@ -1,8 +1,11 @@
 import { Expose } from 'class-transformer';
+import { ReportHistoryEntity } from 'src/app/report/repository/report-history.entity';
+import { ReportEntity } from 'src/app/report/repository/report.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -62,4 +65,18 @@ export class UserEntity {
     @OneToOne(() => UserTypeEntity, { eager: true })
     @JoinColumn({ name: 'type_id' })
     userType: UserTypeEntity;
+
+    @OneToMany(
+        () => ReportEntity,
+        (report: ReportEntity) => report.user,
+    )
+    @JoinColumn({ name: 'id' })
+    reports: ReportEntity[];
+
+    @OneToMany(
+        () => ReportHistoryEntity,
+        (reportHistory: ReportHistoryEntity) => reportHistory.user,
+    )
+    @JoinColumn({ name: 'id' })
+    reportHistories: ReportHistoryEntity[];
 }

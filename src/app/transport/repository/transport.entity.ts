@@ -1,8 +1,10 @@
 import { Expose } from 'class-transformer';
+import { StudentEntity } from 'src/app/student/repository/student.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    ManyToOne,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,7 +19,7 @@ export class TransportEntity {
 
     @Column({ name: 'student_id' })
     @Expose()
-    studentId: number; // TODO: create relationship for this
+    studentId: number;
 
     @Column({ name: 'type_id' })
     @Expose()
@@ -50,4 +52,11 @@ export class TransportEntity {
     @OneToOne(() => TransportStatusEntity, { eager: true })
     @JoinColumn({ name: 'status_id' })
     status: TransportStatusEntity;
+
+    @ManyToOne(
+        () => StudentEntity,
+        (student: StudentEntity) => student.transports,
+    )
+    @JoinColumn({ name: 'id' })
+    student: StudentEntity;
 }

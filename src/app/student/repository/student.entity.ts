@@ -1,8 +1,10 @@
 import { Expose } from 'class-transformer';
+import { TransportEntity } from 'src/app/transport/repository/transport.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -46,4 +48,11 @@ export class StudentEntity {
     @OneToOne(() => CollegeEntity, { eager: true })
     @JoinColumn({ name: 'college_id' })
     college: CollegeEntity;
+
+    @OneToMany(
+        () => TransportEntity,
+        (transport: TransportEntity) => transport.student,
+    )
+    @JoinColumn({ name: 'id' })
+    transports: TransportEntity[];
 }
