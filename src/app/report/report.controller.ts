@@ -9,13 +9,17 @@ import {
 import { CreateReportDto } from './dto/create-report.dto';
 import { ReportDto } from './dto/report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { ReportService } from './report.service';
 
 @Controller()
 export class ReportController {
+    constructor(private readonly reportService: ReportService) {}
+
     @Post()
     async create(@Body() body: CreateReportDto): Promise<ReportDto> {
-        console.log(await body);
-        return null;
+        const newReport = await this.reportService.create(body);
+
+        return ReportDto.fromModel(newReport);
     }
 
     @Put(':reportId')
