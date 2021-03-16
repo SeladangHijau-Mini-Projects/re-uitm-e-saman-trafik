@@ -1,4 +1,4 @@
-export enum Course {
+export enum Faculty {
     Fskm = 'fskm',
     Fkm = 'fkm',
     Fsg = 'fsg',

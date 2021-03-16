@@ -1,4 +1,5 @@
 import { Expose } from 'class-transformer';
+import { StudentEntity } from 'src/app/student/repository/student.entity';
 import { TransportEntity } from 'src/app/transport/repository/transport.entity';
 import { UserEntity } from 'src/app/user/repository/user.entity';
 import {
@@ -31,6 +32,10 @@ export class ReportEntity {
     @Expose()
     userId: number;
 
+    @Column({ name: 'student_id' })
+    @Expose()
+    studentId: number;
+
     @Column({ name: 'location' })
     @Expose()
     location: string;
@@ -50,6 +55,10 @@ export class ReportEntity {
     @OneToOne(() => TransportEntity, { eager: true })
     @JoinColumn({ name: 'transport_id' })
     transport: TransportEntity;
+
+    @OneToOne(() => StudentEntity, { eager: true })
+    @JoinColumn({ name: 'student_id' })
+    student: StudentEntity;
 
     @OneToMany(
         () => ReportHistoryEntity,
