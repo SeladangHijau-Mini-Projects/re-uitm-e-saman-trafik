@@ -87,10 +87,10 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Student full name',
-        example: 'Muhammad NAdzmi Bin Mohamed Idzham',
+        example: 'Muhammad Nadzmi Bin Mohamed Idzham',
     })
     @IsString()
-    studentFullName: string;
+    studentFullname: string;
 
     @ApiProperty({
         description: 'Student course',
@@ -144,7 +144,7 @@ export class ReportDto {
             transportPlateNo: model?.transport?.plateNo,
             transportPassCode: model?.transport?.passCode,
             studentCode: model?.student?.studentCode,
-            studentFullName: model?.student?.fullname,
+            studentFullname: model?.student?.fullname,
             studentCourse: model?.student?.course?.name,
             studentFaculty: model?.student?.course?.faculty?.name,
             studentCollege: model?.student?.college?.name,

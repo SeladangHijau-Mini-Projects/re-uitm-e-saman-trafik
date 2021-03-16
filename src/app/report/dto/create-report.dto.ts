@@ -45,7 +45,7 @@ export class CreateReportDto {
     })
     @IsString()
     @IsOptional()
-    fullName: string;
+    fullname: string;
 
     @ApiProperty({
         description: 'Student course name',
