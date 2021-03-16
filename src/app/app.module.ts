@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ReportModule } from './report/report.module';
 import { StudentModule } from './student/student.module';
 import { TransportModule } from './transport/transport.module';
+import { TrafficErrorModule } from './traffic-error/traffic-error.module';
 
 const routes: Routes = [
     {
@@ -44,6 +45,7 @@ const routes: Routes = [
         ReportModule,
         StudentModule,
         TransportModule,
+        TrafficErrorModule,
     ],
 })
 export class AppModule {}

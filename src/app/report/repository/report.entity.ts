@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { ReportHistoryEntity } from './report-history.entity';
 import { ReportStatusEntity } from './report-status.entity';
+import { ReportTrafficErrorEntity } from './report-traffic-error.entity';
 
 @Entity('reports')
 export class ReportEntity {
@@ -70,4 +71,12 @@ export class ReportEntity {
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'id' })
     user: UserEntity;
+
+    @OneToMany(
+        () => ReportTrafficErrorEntity,
+        (reportTrafficError: ReportTrafficErrorEntity) =>
+            reportTrafficError.report,
+    )
+    @JoinColumn({ name: 'id' })
+    reportTrafficErrors: ReportTrafficErrorEntity[];
 }
