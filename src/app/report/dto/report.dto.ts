@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 import { College } from 'src/app/student/enum/college.enum';
 import { Course } from 'src/app/student/enum/course.enum';
 import { Faculty } from 'src/app/student/enum/faculty.enum';
+import { TrafficErrorEntity } from 'src/app/traffic-error/repository/traffic-error.entity';
 import { TransportStatus } from 'src/app/transport/enum/transport-status.enum';
 import { TransportType } from 'src/app/transport/enum/transport-type.enum';
 import { ReportStatus } from '../enum/report-status.enum';
-import { ReportTrafficErrorEntity } from '../repository/report-traffic-error.entity';
 import { ReportEntity } from '../repository/report.entity';
 import { TrafficErrorDto } from './traffic-error.dto';
 
@@ -31,14 +31,14 @@ export class ReportDto {
         description: 'Report created at date',
         example: '2020-12-10 09:00:00',
     })
-    @IsString()
+    @IsDate()
     createdAt: Date;
 
     @ApiProperty({
         description: 'Report updated at date',
         example: '2020-12-23 09:00:00',
     })
-    @IsString()
+    @IsDate()
     updatedAt: Date;
 
     @ApiProperty({
@@ -135,26 +135,29 @@ export class ReportDto {
             location: model?.location,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
-            remark:
-                model?.histories.length > 0
+            remark: model?.histories
+                ? model?.histories.length > 0
                     ? model?.histories[0]?.remark
-                    : null,
-            transportStatus: model?.transport?.status?.name,
-            transportType: model?.transport?.type?.name,
+                    : null
+                : null,
+            transportStatus: model?.transport?.transportStatus?.name,
+            transportType: model?.transport?.transportType?.name,
             transportPlateNo: model?.transport?.plateNo,
             transportPassCode: model?.transport?.passCode,
             studentCode: model?.student?.studentCode,
             studentFullname: model?.student?.fullname,
-            studentCourse: model?.student?.course?.name,
-            studentFaculty: model?.student?.course?.faculty?.name,
-            studentCollege: model?.student?.college?.name,
-            trafficErrors: model?.reportTrafficErrors?.map(
-                (error: ReportTrafficErrorEntity) =>
-                    ({
-                        name: error?.trafficError?.name,
-                        description: error?.trafficError?.description,
-                    } as TrafficErrorDto),
-            ),
+            studentCourse: model?.student?.studentCourse?.name,
+            studentFaculty: model?.student?.studentCourse?.courseFaculty?.name,
+            studentCollege: model?.student?.studentCollege?.name,
+            trafficErrors: model?.trafficErrors
+                ? model?.trafficErrors?.map(
+                      (error: TrafficErrorEntity) =>
+                          ({
+                              name: error.name,
+                              description: error.description,
+                          } as TrafficErrorDto),
+                  )
+                : [],
         } as ReportDto;
     }
 }
