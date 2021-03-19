@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateStudentDto } from './dto/create-student.dto';
 import { CollegeEntity } from './repository/college.entity';
 import { CourseEntity } from './repository/course.entity';
 import { FacultyEntity } from './repository/faculty.entity';
@@ -18,4 +19,24 @@ export class StudentService {
         @InjectRepository(FacultyEntity)
         private readonly facultyRepository: Repository<FacultyEntity>,
     ) {}
+
+    async findOneByStudentCode(studentCode: string): Promise<StudentEntity> {
+        return this.studentRepository.findOne({ studentCode });
+    }
+
+    async create(dto: CreateStudentDto): Promise<StudentEntity> {
+        const course = await this.courseRepository.findOne({
+            name: dto.course,
+        });
+        const college = await this.collegeRepository.findOne({
+            name: dto.college,
+        });
+
+        return this.studentRepository.save({
+            studentCode: dto.studentCode,
+            fullname: dto.fullname,
+            studentCourse: course,
+            studentCollege: college,
+        } as StudentEntity);
+    }
 }
