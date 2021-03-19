@@ -8,6 +8,7 @@ import { ReportStatusEntity } from './repository/report-status.entity';
 import { ReportEntity } from './repository/report.entity';
 import { TransportModule } from '../transport/transport.module';
 import { TrafficErrorModule } from '../traffic-error/traffic-error.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { TrafficErrorModule } from '../traffic-error/traffic-error.module';
         StudentModule,
         TransportModule,
         TrafficErrorModule,
+        UserModule,
     ],
     controllers: [ReportController],
     providers: [ReportService],
