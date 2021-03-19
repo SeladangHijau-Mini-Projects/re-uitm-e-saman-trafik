@@ -12,7 +12,7 @@ import {
 import { ReportStatusEntity } from './report-status.entity';
 import { ReportEntity } from './report.entity';
 
-@Entity('report_hitories')
+@Entity('report_histories')
 export class ReportHistoryEntity {
     @PrimaryGeneratedColumn()
     @Expose()

@@ -43,16 +43,16 @@ export class StudentEntity {
 
     @OneToOne(() => CourseEntity, { eager: true })
     @JoinColumn({ name: 'course_id' })
-    course: CourseEntity;
+    studentCourse: CourseEntity;
 
     @OneToOne(() => CollegeEntity, { eager: true })
     @JoinColumn({ name: 'college_id' })
-    college: CollegeEntity;
+    studentCollege: CollegeEntity;
 
     @OneToMany(
         () => TransportEntity,
-        (transport: TransportEntity) => transport.student,
+        (transport: TransportEntity) => transport.transportStudent,
     )
     @JoinColumn({ name: 'id' })
-    transports: TransportEntity[];
+    studentTransports: TransportEntity[];
 }

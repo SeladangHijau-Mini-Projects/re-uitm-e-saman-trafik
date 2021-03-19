@@ -1,11 +1,14 @@
 import { Expose } from 'class-transformer';
 import { StudentEntity } from 'src/app/student/repository/student.entity';
+import { TrafficErrorEntity } from 'src/app/traffic-error/repository/traffic-error.entity';
 import { TransportEntity } from 'src/app/transport/repository/transport.entity';
 import { UserEntity } from 'src/app/user/repository/user.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    JoinTable,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     OneToOne,
@@ -79,4 +82,8 @@ export class ReportEntity {
     )
     @JoinColumn({ name: 'id' })
     reportTrafficErrors: ReportTrafficErrorEntity[];
+
+    @ManyToMany(() => TrafficErrorEntity)
+    @JoinTable({ name: 'report_traffic_errors' })
+    trafficErrors: TrafficErrorEntity[];
 }

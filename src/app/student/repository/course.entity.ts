@@ -30,5 +30,5 @@ export class CourseEntity {
 
     @OneToOne(() => FacultyEntity, { eager: true })
     @JoinColumn({ name: 'faculty_id' })
-    faculty: FacultyEntity;
+    courseFaculty: FacultyEntity;
 }
