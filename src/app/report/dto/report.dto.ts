@@ -17,7 +17,6 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Report status',
-        enum: ReportStatus,
         example: ReportStatus.New,
     })
     @IsString()
@@ -50,7 +49,6 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Transport status',
-        enum: TransportStatus,
         example: TransportStatus.Locked,
     })
     @IsString()
@@ -58,7 +56,6 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Transport type',
-        enum: TransportType,
         example: TransportType.Car,
     })
     @IsString()
@@ -94,7 +91,6 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Student course',
-        enum: Course,
         example: Course.Cs230,
     })
     @IsString()
@@ -102,7 +98,6 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Student faculty',
-        enum: Faculty,
         example: Faculty.Fskm,
     })
     @IsString()
@@ -110,7 +105,6 @@ export class ReportDto {
 
     @ApiProperty({
         description: 'Student college',
-        enum: College,
         example: College.Delima,
     })
     @IsString()
@@ -129,9 +123,11 @@ export class ReportDto {
     trafficErrors: TrafficErrorDto[];
 
     static fromModel(model: ReportEntity): ReportDto {
+        console.log('model: ', model);
+
         return {
             id: model?.id,
-            status: model?.status?.name,
+            status: model?.status?.description,
             location: model?.location,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
@@ -140,15 +136,16 @@ export class ReportDto {
                     ? model?.histories[0]?.remark
                     : null
                 : null,
-            transportStatus: model?.transport?.transportStatus?.name,
-            transportType: model?.transport?.transportType?.name,
+            transportStatus: model?.transport?.transportStatus?.description,
+            transportType: model?.transport?.transportType?.description,
             transportPlateNo: model?.transport?.plateNo,
             transportPassCode: model?.transport?.passCode,
             studentCode: model?.student?.studentCode,
             studentFullname: model?.student?.fullname,
-            studentCourse: model?.student?.studentCourse?.name,
-            studentFaculty: model?.student?.studentCourse?.courseFaculty?.name,
-            studentCollege: model?.student?.studentCollege?.name,
+            studentCourse: model?.student?.studentCourse?.description,
+            studentFaculty:
+                model?.student?.studentCourse?.courseFaculty?.description,
+            studentCollege: model?.student?.studentCollege?.description,
             trafficErrors: model?.trafficErrors
                 ? model?.trafficErrors?.map(
                       (error: TrafficErrorEntity) =>

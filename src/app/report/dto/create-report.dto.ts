@@ -46,4 +46,8 @@ export class CreateReportDto {
     })
     @IsString()
     remark: string;
+
+    @ApiProperty({ name: 'Traffic error name' })
+    @IsString({ each: true })
+    trafficErrorList: string[];
 }

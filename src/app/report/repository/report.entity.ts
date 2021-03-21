@@ -8,6 +8,7 @@ import {
     Entity,
     JoinColumn,
     JoinTable,
+    JoinTableOptions,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -16,7 +17,6 @@ import {
 } from 'typeorm';
 import { ReportHistoryEntity } from './report-history.entity';
 import { ReportStatusEntity } from './report-status.entity';
-import { ReportTrafficErrorEntity } from './report-traffic-error.entity';
 
 @Entity('reports')
 export class ReportEntity {
@@ -71,19 +71,21 @@ export class ReportEntity {
     @JoinColumn({ name: 'id' })
     histories: ReportHistoryEntity[];
 
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'id' })
+    @ManyToOne(
+        () => UserEntity,
+        (user: UserEntity) => user.reports,
+    )
+    @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @OneToMany(
-        () => ReportTrafficErrorEntity,
-        (reportTrafficError: ReportTrafficErrorEntity) =>
-            reportTrafficError.report,
+    @ManyToMany(
+        () => TrafficErrorEntity,
+        (trafficError: TrafficErrorEntity) => trafficError.reports,
     )
-    @JoinColumn({ name: 'id' })
-    reportTrafficErrors: ReportTrafficErrorEntity[];
-
-    @ManyToMany(() => TrafficErrorEntity)
-    @JoinTable({ name: 'report_traffic_errors' })
+    @JoinTable({
+        name: 'report_traffic_errors',
+        joinColumn: 'report_id',
+        inverseJoinColumn: 'traffic_error_id',
+    } as JoinTableOptions)
     trafficErrors: TrafficErrorEntity[];
 }

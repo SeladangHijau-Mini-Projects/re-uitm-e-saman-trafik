@@ -15,23 +15,31 @@ export class TrafficErrorService {
         >,
     ) {}
 
-    async createReportTrafficError(
+    async findByNameList(nameList: string[]): Promise<TrafficErrorEntity[]> {
+        const trafficErrorList = [];
+
+        for await (const name of nameList) {
+            trafficErrorList.push(
+                await this.trafficErrorRepository.findOne({
+                    name,
+                }),
+            );
+        }
+
+        return trafficErrorList;
+    }
+
+    async create(
         reportId: number,
         errorNameList: string[],
     ): Promise<TrafficErrorEntity[]> {
-        const trafficErrorList = [];
+        const trafficErrorList = await this.findByNameList(errorNameList);
 
-        for await (const name of errorNameList) {
-            const trafficError = await this.trafficErrorRepository.findOne({
-                name,
-            });
-
+        for await (const trafficError of trafficErrorList) {
             await this.reportTrafficErrorRepository.save({
                 reportId,
-                trafficError,
+                trafficErrorId: trafficError.id,
             } as ReportTrafficErrorEntity);
-
-            trafficErrorList.push(trafficError);
         }
 
         return trafficErrorList;

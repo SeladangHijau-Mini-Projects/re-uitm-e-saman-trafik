@@ -20,7 +20,6 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { ReportStatus } from './enum/report-status.enum';
 import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
-import { ReportEntity } from './repository/report.entity';
 
 @Controller()
 export class ReportController {
@@ -74,23 +73,20 @@ export class ReportController {
         // create report
         const newReport = await this.reportService.create({
             transportId: transport.id,
-            studentId: student?.id,
+            studentId: student.id,
             location: body.location,
             remark: body.remark,
             status: ReportStatus.New,
-            userId: body.userId,
+            userId: user.id,
+            trafficErrorList: body.trafficErrors,
         } as CreateReportDto);
 
-        // set report traffic error
-        const trafficErrorList = await this.trafficErrorService.createReportTrafficError(
-            newReport.id,
-            body.trafficErrors,
+        console.log(
+            'newReport: ',
+            await this.reportService.findOne(newReport.id),
         );
 
-        return ReportDto.fromModel({
-            ...newReport,
-            trafficErrors: trafficErrorList,
-        } as ReportEntity);
+        return ReportDto.fromModel(newReport);
     }
 
     @Put(':reportId')

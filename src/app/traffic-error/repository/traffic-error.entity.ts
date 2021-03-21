@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
-import { ReportTrafficErrorEntity } from 'src/app/report/repository/report-traffic-error.entity';
-import { Column, Entity, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
+import { ReportEntity } from 'src/app/report/repository/report.entity';
+import { Column, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
 
 @Entity('traffic_errors')
 export class TrafficErrorEntity {
@@ -28,11 +28,9 @@ export class TrafficErrorEntity {
     @Expose()
     updatedAt: Date;
 
-    @OneToMany(
-        () => ReportTrafficErrorEntity,
-        (reportTrafficError: ReportTrafficErrorEntity) =>
-            reportTrafficError.trafficError,
+    @ManyToMany(
+        () => ReportEntity,
+        (report: ReportEntity) => report.trafficErrors,
     )
-    @JoinColumn({ name: 'id' })
-    reportTrafficErrors: ReportTrafficErrorEntity[];
+    reports: ReportEntity[];
 }
