@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
-import { TrafficErrorService } from '../traffic-error/traffic-error.service';
 import { TransportService } from '../transport/transport.service';
 import { SubmitReportDto } from './dto/submit-report.dto';
 import { ReportDto } from './dto/report.dto';
@@ -27,7 +26,6 @@ export class ReportController {
         private readonly reportService: ReportService,
         private readonly studentService: StudentService,
         private readonly transportService: TransportService,
-        private readonly trafficErrorService: TrafficErrorService,
         private readonly userService: UserService,
     ) {}
 
@@ -81,12 +79,9 @@ export class ReportController {
             trafficErrorList: body.trafficErrors,
         } as CreateReportDto);
 
-        console.log(
-            'newReport: ',
-            await this.reportService.findOne(newReport.id),
-        );
+        const result = await this.reportService.findOne(newReport.id);
 
-        return ReportDto.fromModel(newReport);
+        return ReportDto.fromModel(result);
     }
 
     @Put(':reportId')

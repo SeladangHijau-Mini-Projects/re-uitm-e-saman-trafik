@@ -3,7 +3,6 @@ import { IsDate, IsNumber, IsString } from 'class-validator';
 import { College } from 'src/app/student/enum/college.enum';
 import { Course } from 'src/app/student/enum/course.enum';
 import { Faculty } from 'src/app/student/enum/faculty.enum';
-import { TrafficErrorEntity } from 'src/app/traffic-error/repository/traffic-error.entity';
 import { TransportStatus } from 'src/app/transport/enum/transport-status.enum';
 import { TransportType } from 'src/app/transport/enum/transport-type.enum';
 import { ReportStatus } from '../enum/report-status.enum';
@@ -123,8 +122,6 @@ export class ReportDto {
     trafficErrors: TrafficErrorDto[];
 
     static fromModel(model: ReportEntity): ReportDto {
-        console.log('model: ', model);
-
         return {
             id: model?.id,
             status: model?.status?.description,
@@ -146,12 +143,12 @@ export class ReportDto {
             studentFaculty:
                 model?.student?.studentCourse?.courseFaculty?.description,
             studentCollege: model?.student?.studentCollege?.description,
-            trafficErrors: model?.trafficErrors
-                ? model?.trafficErrors?.map(
-                      (error: TrafficErrorEntity) =>
+            trafficErrors: model?.reportTrafficErrors
+                ? model?.reportTrafficErrors?.map(
+                      (error: object) =>
                           ({
-                              name: error.name,
-                              description: error.description,
+                              name: error['trafficError']['name'],
+                              description: error['trafficError']['description'],
                           } as TrafficErrorDto),
                   )
                 : [],

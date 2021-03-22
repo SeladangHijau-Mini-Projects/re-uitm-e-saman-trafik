@@ -7,9 +7,6 @@ import {
     Column,
     Entity,
     JoinColumn,
-    JoinTable,
-    JoinTableOptions,
-    ManyToMany,
     ManyToOne,
     OneToMany,
     OneToOne,
@@ -17,10 +14,11 @@ import {
 } from 'typeorm';
 import { ReportHistoryEntity } from './report-history.entity';
 import { ReportStatusEntity } from './report-status.entity';
+import { ReportTrafficErrorEntity } from './report-traffic-error.entity';
 
 @Entity('reports')
 export class ReportEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({ name: 'id' })
     @Expose()
     id: number;
 
@@ -78,14 +76,11 @@ export class ReportEntity {
     @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
-    @ManyToMany(
-        () => TrafficErrorEntity,
-        (trafficError: TrafficErrorEntity) => trafficError.reports,
+    @OneToMany(
+        () => ReportTrafficErrorEntity,
+        (reportTrafficError: ReportTrafficErrorEntity) =>
+            reportTrafficError.report,
     )
-    @JoinTable({
-        name: 'report_traffic_errors',
-        joinColumn: 'report_id',
-        inverseJoinColumn: 'traffic_error_id',
-    } as JoinTableOptions)
-    trafficErrors: TrafficErrorEntity[];
+    @JoinColumn({ name: 'id' })
+    reportTrafficErrors: TrafficErrorEntity[];
 }

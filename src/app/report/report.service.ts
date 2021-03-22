@@ -24,7 +24,7 @@ export class ReportService {
 
     async findOne(reportId: number): Promise<ReportEntity> {
         return this.reportRepository.findOne(reportId, {
-            relations: ['histories', 'trafficErrors'],
+            relations: ['histories', 'reportTrafficErrors'],
         });
     }
 
