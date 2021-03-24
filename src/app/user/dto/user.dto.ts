@@ -47,8 +47,6 @@ export class UserDto {
     readonly firstTimer: boolean;
 
     static fromModel(model: UserEntity): UserDto {
-        console.log('model: ', model);
-
         return {
             id: model?.id,
             rank: model?.userRank?.name,
