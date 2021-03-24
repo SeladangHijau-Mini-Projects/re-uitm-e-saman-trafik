@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Get,
     Param,
     ParseIntPipe,
     Post,
@@ -30,6 +31,22 @@ export class ReportController {
         private readonly userService: UserService,
         private readonly trafficErrorService: TrafficErrorService,
     ) {}
+
+    // @Get()
+    // async find(): Promise<ReportDto[]> {}
+
+    @Get(':reportId')
+    async findOne(
+        @Param('reportId', ParseIntPipe) reportId: number,
+    ): Promise<ReportDto> {
+        const report = await this.reportService.findOne(reportId);
+
+        if (!report) {
+            throw new ResourceNotFoundException('Report ID not found.');
+        }
+
+        return ReportDto.fromModel(report);
+    }
 
     @Post()
     async create(@Body() body: SubmitReportDto): Promise<ReportDto> {
