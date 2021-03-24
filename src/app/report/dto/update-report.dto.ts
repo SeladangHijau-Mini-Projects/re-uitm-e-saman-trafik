@@ -6,6 +6,10 @@ import {
     IsNumber,
     IsNotEmpty,
 } from 'class-validator';
+import { College } from 'src/app/student/enum/college.enum';
+import { Course } from 'src/app/student/enum/course.enum';
+import { TransportStatus } from 'src/app/transport/enum/transport-status.enum';
+import { TransportType } from 'src/app/transport/enum/transport-type.enum';
 import { ReportStatus } from '../enum/report-status.enum';
 
 export class UpdateReportDto {
@@ -53,6 +57,71 @@ export class UpdateReportDto {
     @IsNotEmpty()
     @IsOptional()
     remark: string;
+
+    @ApiProperty({ description: 'Transport plate no', example: 'QWE 123' })
+    @IsString()
+    @IsOptional()
+    transportPlateNo: string;
+
+    @ApiProperty({
+        description: 'Student transport pass code',
+        example: 'K201512563BE',
+    })
+    @IsString()
+    @IsOptional()
+    transportPassCode: string;
+
+    @ApiProperty({
+        description: 'Student transport type',
+        enum: TransportType,
+        example: TransportType.Car,
+    })
+    @IsEnum(TransportType)
+    @IsOptional()
+    transportType: string;
+
+    @ApiProperty({
+        description: 'Student transport status',
+        enum: TransportStatus,
+        example: TransportStatus.Locked,
+    })
+    @IsEnum(TransportStatus)
+    @IsOptional()
+    transportStatus: string;
+
+    @ApiProperty({
+        description: 'Student code',
+        example: '2015125573',
+    })
+    @IsString()
+    @IsOptional()
+    studentCode: string;
+
+    @ApiProperty({
+        description: 'Student name',
+        example: '2015125573',
+    })
+    @IsString()
+    @IsOptional()
+    studentFullname: string;
+
+    @ApiProperty({
+        description: 'Student course name',
+        enum: Course,
+        example: Course.Cs230,
+    })
+    @IsString()
+    @IsOptional()
+    studentCourse: string;
+
+    @ApiProperty({
+        description: 'Student college name',
+        enum: College,
+        example: College.Delima,
+    })
+    @IsString()
+    @IsOptional()
+    studentCollege: string;
 
     @ApiProperty({
         description: 'Traffic errors',

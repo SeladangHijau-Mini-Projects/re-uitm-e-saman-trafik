@@ -110,17 +110,15 @@ export class ReportController {
         }
 
         // validate or create student
-        // TODO: must have properties to create student in dto
         const student = await this.studentService.findOne(body.studentId);
         if (body.studentId && !student) {
-            throw new ResourceNotFoundException('Student ID not found.'); // TODO: replace with create student
+            throw new ResourceNotFoundException('Student ID was not found.');
         }
 
         // validate or create transport
-        // TODO: must have properties to create transport in dto
         const transport = await this.transportService.findOne(body.transportId);
         if (body.transportId && !transport) {
-            throw new ResourceNotFoundException('Transport ID not found.'); // TODO: replace with create transport
+            throw new ResourceNotFoundException('Transport ID was not found.');
         }
 
         // update report
