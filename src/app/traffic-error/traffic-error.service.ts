@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { Repository } from 'typeorm';
 import { ReportTrafficErrorEntity } from '../report/repository/report-traffic-error.entity';
 import { TrafficErrorEntity } from './repository/traffic-error.entity';
@@ -19,17 +20,23 @@ export class TrafficErrorService {
         const trafficErrorList = [];
 
         for await (const name of nameList) {
-            trafficErrorList.push(
-                await this.trafficErrorRepository.findOne({
-                    name,
-                }),
-            );
+            const trafficError = await this.trafficErrorRepository.findOne({
+                name,
+            });
+
+            if (!trafficError) {
+                throw new ResourceNotFoundException(
+                    `Traffic Error '${name}' was not found.`,
+                );
+            }
+
+            trafficErrorList.push(trafficError);
         }
 
         return trafficErrorList;
     }
 
-    async create(
+    async createAll(
         reportId: number,
         errorNameList: string[],
     ): Promise<TrafficErrorEntity[]> {
@@ -43,5 +50,17 @@ export class TrafficErrorService {
         }
 
         return trafficErrorList;
+    }
+
+    async updateAll(
+        reportId: number,
+        errorNameList: string[],
+    ): Promise<TrafficErrorEntity[]> {
+        await this.deleteAllByReportId(reportId);
+        return this.createAll(reportId, errorNameList);
+    }
+
+    async deleteAllByReportId(reportId: number): Promise<void> {
+        await this.reportTrafficErrorRepository.delete({ reportId });
     }
 }

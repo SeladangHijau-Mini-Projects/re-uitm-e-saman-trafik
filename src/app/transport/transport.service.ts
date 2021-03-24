@@ -21,6 +21,10 @@ export class TransportService {
         >,
     ) {}
 
+    async findOne(transportId: number): Promise<TransportEntity> {
+        return this.transportRepository.findOne(transportId);
+    }
+
     async findOneByPlateNo(plateNo: string): Promise<TransportEntity> {
         return this.transportRepository.findOne({ plateNo });
     }

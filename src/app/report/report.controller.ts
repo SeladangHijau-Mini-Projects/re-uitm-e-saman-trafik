@@ -19,6 +19,7 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { ReportStatus } from './enum/report-status.enum';
 import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
+import { TrafficErrorService } from '../traffic-error/traffic-error.service';
 
 @Controller()
 export class ReportController {
@@ -27,6 +28,7 @@ export class ReportController {
         private readonly studentService: StudentService,
         private readonly transportService: TransportService,
         private readonly userService: UserService,
+        private readonly trafficErrorService: TrafficErrorService,
     ) {}
 
     @Post()
@@ -79,9 +81,9 @@ export class ReportController {
             trafficErrorList: body.trafficErrors,
         } as CreateReportDto);
 
-        const result = await this.reportService.findOne(newReport.id);
-
-        return ReportDto.fromModel(result);
+        return ReportDto.fromModel(
+            await this.reportService.findOne(newReport.id),
+        );
     }
 
     @Put(':reportId')
@@ -89,8 +91,49 @@ export class ReportController {
         @Param('reportId', ParseIntPipe) reportId: number,
         @Body() body: UpdateReportDto,
     ): Promise<ReportDto> {
-        console.log(await reportId);
-        console.log(await body);
-        return null;
+        // validate report
+        const report = await this.reportService.findOne(reportId);
+        if (!report) {
+            throw new ResourceNotFoundException('Report ID was not found.');
+        }
+
+        // validate status
+        const status = await this.reportService.findStatus(body.status);
+        if (!status) {
+            throw new ResourceNotFoundException('Status was not found.');
+        }
+
+        // validate user
+        const user = await this.userService.findOne(body.userId);
+        if (body.userId && !user) {
+            throw new ResourceNotFoundException('User ID not found.');
+        }
+
+        // validate or create student
+        // TODO: must have properties to create student in dto
+        const student = await this.studentService.findOne(body.studentId);
+        if (body.studentId && !student) {
+            throw new ResourceNotFoundException('Student ID not found.'); // TODO: replace with create student
+        }
+
+        // validate or create transport
+        // TODO: must have properties to create transport in dto
+        const transport = await this.transportService.findOne(body.transportId);
+        if (body.transportId && !transport) {
+            throw new ResourceNotFoundException('Transport ID not found.'); // TODO: replace with create transport
+        }
+
+        // update report
+        await this.reportService.update(report.id, {
+            userId: user?.id ?? report.userId,
+            status: status?.name ?? report.status.name,
+            studentId: student?.id ?? report.studentId,
+            transportId: transport?.id ?? report.transportId,
+            location: body.location ?? report.location,
+            remark: body.remark,
+            trafficErrors: body.trafficErrors,
+        } as UpdateReportDto);
+
+        return ReportDto.fromModel(await this.reportService.findOne(reportId));
     }
 }

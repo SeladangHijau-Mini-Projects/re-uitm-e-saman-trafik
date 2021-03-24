@@ -28,6 +28,10 @@ export class ReportService {
         });
     }
 
+    async findStatus(status: string): Promise<ReportStatusEntity> {
+        return this.reportStatusRepository.findOne({ name: status });
+    }
+
     async create(dto: CreateReportDto): Promise<ReportEntity> {
         const status = await this.reportStatusRepository.findOne({
             name: dto.status,
@@ -55,7 +59,7 @@ export class ReportService {
             } as ReportHistoryEntity);
 
             // create traffic error
-            await this.trafficErrorService.create(
+            await this.trafficErrorService.createAll(
                 report.id,
                 dto.trafficErrorList,
             );
@@ -64,8 +68,43 @@ export class ReportService {
         return report;
     }
 
-    async update(dto: UpdateReportDto): Promise<ReportEntity> {
-        console.log(await dto);
-        return null;
+    async update(
+        reportId: number,
+        dto: UpdateReportDto,
+    ): Promise<ReportEntity> {
+        const status = await this.reportStatusRepository.findOne({
+            name: dto.status,
+        });
+
+        // update report
+        const updatedReport = await this.reportRepository.save({
+            id: reportId,
+            status,
+            transportId: dto.transportId,
+            userId: dto.userId,
+            studentId: dto.studentId,
+            location: dto.location,
+        } as ReportEntity);
+
+        // update traffic errors
+        await this.trafficErrorService.updateAll(
+            updatedReport.id,
+            dto.trafficErrors,
+        );
+
+        // create new history with remark
+        await this.reportHistoryRepository.save(
+            {
+                reportId: updatedReport.id,
+                status,
+                userId: updatedReport.userId,
+                transportId: updatedReport.transportId,
+                location: updatedReport.location,
+                remark: dto.remark,
+            } as ReportHistoryEntity,
+            { reload: true },
+        );
+
+        return updatedReport;
     }
 }

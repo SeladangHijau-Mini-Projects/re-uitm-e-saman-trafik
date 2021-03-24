@@ -20,6 +20,10 @@ export class StudentService {
         private readonly facultyRepository: Repository<FacultyEntity>,
     ) {}
 
+    async findOne(studentId: number): Promise<StudentEntity> {
+        return this.studentRepository.findOne(studentId);
+    }
+
     async findOneByStudentCode(studentCode: string): Promise<StudentEntity> {
         return this.studentRepository.findOne({ studentCode });
     }
