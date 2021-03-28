@@ -148,9 +148,12 @@ export class ReportDto {
                 ? model?.reportReportTrafficErrors?.map(
                       (error: object) =>
                           ({
-                              name: error['reportTrafficErrorReport']['name'],
+                              name:
+                                  error['reportTrafficErrorTrafficError'][
+                                      'name'
+                                  ],
                               description:
-                                  error['reportTrafficErrorReport'][
+                                  error['reportTrafficErrorTrafficError'][
                                       'description'
                                   ],
                           } as TrafficErrorDto),
