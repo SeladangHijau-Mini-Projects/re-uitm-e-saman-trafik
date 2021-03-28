@@ -6,6 +6,7 @@ import {
     ParseIntPipe,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
@@ -21,6 +22,7 @@ import { ReportStatus } from './enum/report-status.enum';
 import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { TrafficErrorService } from '../traffic-error/traffic-error.service';
+import { ReportQueryParamDto } from './dto/report-query-param.dto';
 
 @Controller()
 export class ReportController {
@@ -32,8 +34,12 @@ export class ReportController {
         private readonly trafficErrorService: TrafficErrorService,
     ) {}
 
-    // @Get()
-    // async find(): Promise<ReportDto[]> {}
+    @Get()
+    async find(@Query() param: ReportQueryParamDto): Promise<ReportDto[]> {
+        const reportList = await this.reportService.findAll(param);
+
+        return reportList.map(ReportDto.fromModel);
+    }
 
     @Get(':reportId')
     async findOne(
@@ -141,7 +147,7 @@ export class ReportController {
         // update report
         await this.reportService.update(report.id, {
             userId: user?.id ?? report.userId,
-            status: status?.name ?? report.status.name,
+            status: status?.name ?? report.reportStatus.name,
             studentId: student?.id ?? report.studentId,
             transportId: transport?.id ?? report.transportId,
             location: body.location ?? report.location,

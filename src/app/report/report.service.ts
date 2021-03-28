@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { StudentService } from '../student/student.service';
 import { TrafficErrorService } from '../traffic-error/traffic-error.service';
+import { TransportService } from '../transport/transport.service';
+import { UserService } from '../user/user.service';
 import { CreateReportDto } from './dto/create-report.dto';
+import { ReportQueryParamDto } from './dto/report-query-param.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
+import { ReportQueryFilter } from './query-filter/report.query-filter';
 import { ReportHistoryEntity } from './repository/report-history.entity';
 import { ReportStatusEntity } from './repository/report-status.entity';
 import { ReportEntity } from './repository/report.entity';
@@ -20,7 +25,55 @@ export class ReportService {
         @InjectRepository(ReportStatusEntity)
         private readonly reportStatusRepository: Repository<ReportStatusEntity>,
         private readonly trafficErrorService: TrafficErrorService,
+        private readonly transportService: TransportService,
+        private readonly studentService: StudentService,
+        private readonly userService: UserService,
     ) {}
+
+    async findAll(dto: ReportQueryParamDto): Promise<ReportEntity[]> {
+        if (dto.status) {
+            const status = await this.reportStatusRepository.findOne({
+                name: dto.status,
+            });
+
+            dto = {
+                ...dto,
+                statusId: status?.id,
+            } as ReportQueryParamDto;
+        }
+        if (dto.transportPlateNo) {
+            const transport = await this.transportService.findOneByPlateNo(
+                dto.transportPlateNo,
+            );
+
+            dto = {
+                ...dto,
+                transportId: transport?.id,
+            } as ReportQueryParamDto;
+        }
+        if (dto.studentCode) {
+            const student = await this.studentService.findOneByStudentCode(
+                dto.studentCode,
+            );
+
+            dto = {
+                ...dto,
+                studentId: student?.id,
+            } as ReportQueryParamDto;
+        }
+        if (dto.userCode) {
+            const user = await this.userService.findOneByUserCode(dto.userCode);
+
+            dto = {
+                ...dto,
+                userId: user?.id,
+            } as ReportQueryParamDto;
+        }
+
+        const query = new ReportQueryFilter(dto).toTypeormQuery();
+
+        return this.reportRepository.find(query);
+    }
 
     async findOne(reportId: number): Promise<ReportEntity> {
         return this.reportRepository.findOne(reportId, {
@@ -39,7 +92,7 @@ export class ReportService {
 
         // create new report
         const report = await this.reportRepository.save({
-            status,
+            reportStatus: status,
             transportId: dto.transportId,
             userId: dto.userId,
             studentId: dto.studentId,
@@ -79,7 +132,7 @@ export class ReportService {
         // update report
         const updatedReport = await this.reportRepository.save({
             id: reportId,
-            status,
+            reportStatus: status,
             transportId: dto.transportId,
             userId: dto.userId,
             studentId: dto.studentId,
