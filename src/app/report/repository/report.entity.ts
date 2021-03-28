@@ -52,29 +52,29 @@ export class ReportEntity {
 
     @OneToOne(() => ReportStatusEntity, { eager: true })
     @JoinColumn({ name: 'status_id' })
-    status: ReportStatusEntity;
+    reportStatus: ReportStatusEntity;
 
     @OneToOne(() => TransportEntity, { eager: true })
     @JoinColumn({ name: 'transport_id' })
-    transport: TransportEntity;
+    reportTransport: TransportEntity;
 
     @OneToOne(() => StudentEntity, { eager: true })
     @JoinColumn({ name: 'student_id' })
-    student: StudentEntity;
+    reportStudent: StudentEntity;
 
     @OneToMany(
         () => ReportHistoryEntity,
         (history: ReportHistoryEntity) => history.report,
     )
     @JoinColumn({ name: 'id' })
-    histories: ReportHistoryEntity[];
+    reportHistories: ReportHistoryEntity[];
 
     @ManyToOne(
         () => UserEntity,
         (user: UserEntity) => user.reports,
     )
     @JoinColumn({ name: 'user_id' })
-    user: UserEntity;
+    reportUser: UserEntity;
 
     @OneToMany(
         () => ReportTrafficErrorEntity,
@@ -82,5 +82,5 @@ export class ReportEntity {
             reportTrafficError.report,
     )
     @JoinColumn({ name: 'id' })
-    reportTrafficErrors: TrafficErrorEntity[];
+    reportReportTrafficErrors: TrafficErrorEntity[];
 }

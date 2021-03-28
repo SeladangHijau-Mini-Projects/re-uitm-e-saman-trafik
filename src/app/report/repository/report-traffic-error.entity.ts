@@ -37,7 +37,7 @@ export class ReportTrafficErrorEntity {
 
     @ManyToOne(
         () => ReportEntity,
-        (report: ReportEntity) => report.reportTrafficErrors,
+        (report: ReportEntity) => report.reportReportTrafficErrors,
         { eager: true },
     )
     @JoinColumn({ name: 'report_id' })

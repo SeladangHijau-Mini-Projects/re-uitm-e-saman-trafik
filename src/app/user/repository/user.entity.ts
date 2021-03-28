@@ -68,7 +68,7 @@ export class UserEntity {
 
     @OneToMany(
         () => ReportEntity,
-        (report: ReportEntity) => report.user,
+        (report: ReportEntity) => report.reportUser,
     )
     @JoinColumn({ name: 'id' })
     reports: ReportEntity[];

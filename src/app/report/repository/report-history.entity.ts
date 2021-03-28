@@ -60,7 +60,7 @@ export class ReportHistoryEntity {
 
     @ManyToOne(
         () => ReportEntity,
-        (report: ReportEntity) => report.histories,
+        (report: ReportEntity) => report.reportHistories,
     )
     @JoinColumn({ name: 'id' })
     report: ReportEntity;
