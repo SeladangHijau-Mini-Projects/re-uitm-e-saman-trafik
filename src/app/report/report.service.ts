@@ -71,13 +71,14 @@ export class ReportService {
         }
 
         const query = new ReportQueryFilter(dto).toTypeormQuery();
+        query.relations = ['reportHistories', 'reportReportTrafficErrors'];
 
         return this.reportRepository.find(query);
     }
 
     async findOne(reportId: number): Promise<ReportEntity> {
         return this.reportRepository.findOne(reportId, {
-            relations: ['histories', 'reportTrafficErrors'],
+            relations: ['reportHistories', 'reportReportTrafficErrors'],
         });
     }
 
@@ -149,7 +150,7 @@ export class ReportService {
         await this.reportHistoryRepository.save(
             {
                 reportId: updatedReport.id,
-                status,
+                reportHistoryStatus: status,
                 userId: updatedReport.userId,
                 transportId: updatedReport.transportId,
                 location: updatedReport.location,

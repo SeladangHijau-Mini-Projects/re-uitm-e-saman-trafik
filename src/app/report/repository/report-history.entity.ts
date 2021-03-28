@@ -52,23 +52,23 @@ export class ReportHistoryEntity {
 
     @OneToOne(() => ReportStatusEntity, { eager: true })
     @JoinColumn({ name: 'status_id' })
-    status: ReportStatusEntity;
+    reportHistoryStatus: ReportStatusEntity;
 
     @OneToOne(() => TransportEntity, { eager: true })
     @JoinColumn({ name: 'transport_id' })
-    transport: TransportEntity;
+    reportHistoryTransport: TransportEntity;
 
     @ManyToOne(
         () => ReportEntity,
         (report: ReportEntity) => report.reportHistories,
     )
     @JoinColumn({ name: 'id' })
-    report: ReportEntity;
+    reportHistoryReport: ReportEntity;
 
     @ManyToOne(
         () => UserEntity,
         (user: UserEntity) => user.reportHistories,
     )
     @JoinColumn({ name: 'id' })
-    user: UserEntity;
+    reportHistoryUser: UserEntity;
 }

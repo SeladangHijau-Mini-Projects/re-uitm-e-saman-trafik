@@ -64,7 +64,7 @@ export class ReportEntity {
 
     @OneToMany(
         () => ReportHistoryEntity,
-        (history: ReportHistoryEntity) => history.report,
+        (history: ReportHistoryEntity) => history.reportHistoryReport,
     )
     @JoinColumn({ name: 'id' })
     reportHistories: ReportHistoryEntity[];
@@ -79,7 +79,7 @@ export class ReportEntity {
     @OneToMany(
         () => ReportTrafficErrorEntity,
         (reportTrafficError: ReportTrafficErrorEntity) =>
-            reportTrafficError.report,
+            reportTrafficError.reportTrafficErrorReport,
     )
     @JoinColumn({ name: 'id' })
     reportReportTrafficErrors: TrafficErrorEntity[];

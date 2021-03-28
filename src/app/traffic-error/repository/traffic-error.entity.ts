@@ -37,8 +37,8 @@ export class TrafficErrorEntity {
     @OneToMany(
         () => ReportTrafficErrorEntity,
         (reportTrafficError: ReportTrafficErrorEntity) =>
-            reportTrafficError.trafficError,
+            reportTrafficError.reportTrafficErrorTrafficError,
     )
     @JoinColumn({ name: 'id' })
-    reportTrafficErrors: ReportTrafficErrorEntity[];
+    trafficErrorReportTrafficErrors: ReportTrafficErrorEntity[];
 }
