@@ -124,31 +124,38 @@ export class ReportDto {
     static fromModel(model: ReportEntity): ReportDto {
         return {
             id: model?.id,
-            status: model?.status?.description,
+            status: model?.reportStatus?.description,
             location: model?.location,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
-            remark: model?.histories
-                ? model?.histories.length > 0
-                    ? model?.histories[0]?.remark
+            remark: model?.reportHistories
+                ? model?.reportHistories.length > 0
+                    ? model?.reportHistories[0]?.remark
                     : null
                 : null,
-            transportStatus: model?.transport?.transportStatus?.description,
-            transportType: model?.transport?.transportType?.description,
-            transportPlateNo: model?.transport?.plateNo,
-            transportPassCode: model?.transport?.passCode,
-            studentCode: model?.student?.studentCode,
-            studentFullname: model?.student?.fullname,
-            studentCourse: model?.student?.studentCourse?.description,
+            transportStatus:
+                model?.reportTransport?.transportStatus?.description,
+            transportType: model?.reportTransport?.transportType?.description,
+            transportPlateNo: model?.reportTransport?.plateNo,
+            transportPassCode: model?.reportTransport?.passCode,
+            studentCode: model?.reportStudent?.studentCode,
+            studentFullname: model?.reportStudent?.fullname,
+            studentCourse: model?.reportStudent?.studentCourse?.description,
             studentFaculty:
-                model?.student?.studentCourse?.courseFaculty?.description,
-            studentCollege: model?.student?.studentCollege?.description,
-            trafficErrors: model?.reportTrafficErrors
-                ? model?.reportTrafficErrors?.map(
+                model?.reportStudent?.studentCourse?.courseFaculty?.description,
+            studentCollege: model?.reportStudent?.studentCollege?.description,
+            trafficErrors: model?.reportReportTrafficErrors
+                ? model?.reportReportTrafficErrors?.map(
                       (error: object) =>
                           ({
-                              name: error['trafficError']['name'],
-                              description: error['trafficError']['description'],
+                              name:
+                                  error['reportTrafficErrorTrafficError'][
+                                      'name'
+                                  ],
+                              description:
+                                  error['reportTrafficErrorTrafficError'][
+                                      'description'
+                                  ],
                           } as TrafficErrorDto),
                   )
                 : [],
