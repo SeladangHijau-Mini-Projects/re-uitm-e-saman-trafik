@@ -48,4 +48,17 @@ export class AuthService {
 
         return this.authRepository.save(newAuth);
     }
+
+    async resetPassword(
+        authId: number,
+        newPassword: string,
+    ): Promise<AuthEntity> {
+        const auth = await this.authRepository.findOne(authId);
+
+        return this.authRepository.save({
+            id: auth.id,
+            password: newPassword,
+            resetToken: null,
+        });
+    }
 }

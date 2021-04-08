@@ -29,6 +29,8 @@ export class AddAuthTable1617900035590 implements MigrationInterface {
                     {
                         name: 'reset_token',
                         type: 'varchar',
+                        isNullable: true,
+                        default: null,
                     },
                     {
                         name: 'created_at',
