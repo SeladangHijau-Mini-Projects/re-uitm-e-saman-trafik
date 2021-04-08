@@ -32,7 +32,7 @@ export class AuthController {
             throw new UnauthorizedException('Unauthorized user.');
         }
 
-        const userToken = this.authService.generateToken(
+        const userToken = this.authService.generateJwtToken(
             user.id,
             user.userType.name,
         );
@@ -49,11 +49,16 @@ export class AuthController {
         );
 
         if (existingUser) {
-            throw new ExistsException('User code exist.');
+            throw new ExistsException(`User code '${body.userCode}' exist.`);
         }
 
         const newUser = await this.userService.create(body);
         const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newUser.id}`; // TODO: need to generate a correct URL for reset password
+
+        await this.authService.generateAuth(
+            newUser?.id,
+            newUser?.userType?.name,
+        );
 
         return {
             id: newUser.id,
@@ -83,7 +88,7 @@ export class AuthController {
         const updatedUser = await this.userService.update(user, {
             password: body.password,
         } as UpdateUserDto);
-        const userToken = this.authService.generateToken(
+        const userToken = this.authService.generateJwtToken(
             updatedUser.id,
             updatedUser.userType.name,
         );
