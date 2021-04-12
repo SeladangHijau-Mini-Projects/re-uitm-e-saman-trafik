@@ -2,14 +2,13 @@ import {
     Body,
     Controller,
     Param,
-    ParseIntPipe,
     Post,
     UnauthorizedException,
 } from '@nestjs/common';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
+import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoggedInDto } from './dto/logged-in.dto';
@@ -32,7 +31,7 @@ export class AuthController {
             throw new UnauthorizedException('Unauthorized user.');
         }
 
-        const userToken = this.authService.generateToken(
+        const userToken = this.authService.generateJwtToken(
             user.id,
             user.userType.name,
         );
@@ -49,11 +48,15 @@ export class AuthController {
         );
 
         if (existingUser) {
-            throw new ExistsException('User code exist.');
+            throw new ExistsException(`User code '${body.userCode}' exist.`);
         }
 
         const newUser = await this.userService.create(body);
-        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newUser.id}`; // TODO: need to generate a correct URL for reset password
+        const newAuth = await this.authService.generateAuth(
+            newUser?.id,
+            newUser?.userType?.name,
+        );
+        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`;
 
         return {
             id: newUser.id,
@@ -62,30 +65,30 @@ export class AuthController {
         } as RegisteredDto;
     }
 
-    @Post('forgot-password/:userId')
+    @Post('forgot-password/:resetToken')
     async forgotPassword(
-        @Param('userId', ParseIntPipe) userId: number,
+        @Param('resetToken') resetToken: string,
         @Body() body: PasswordResetDto,
     ): Promise<LoggedInDto> {
-        const user = await this.userService.findOne(userId);
-
         if (body.password != body.confirmPassword) {
             throw new InvalidValueException(
                 `Both password & confirmPassword field is not equal.`,
             );
         }
-        if (user.password == body.password) {
-            throw new InvalidValueException(
-                'Password must not be the same as previously set.',
-            );
+
+        const auth = await this.authService.findByResetToken(resetToken);
+        if (!auth) {
+            throw new ResourceNotFoundException('Reset token not found.');
         }
 
-        const updatedUser = await this.userService.update(user, {
-            password: body.password,
-        } as UpdateUserDto);
-        const userToken = this.authService.generateToken(
-            updatedUser.id,
-            updatedUser.userType.name,
+        const curAuth = await this.authService.findByResetToken(resetToken);
+        const user = await this.userService.findOne(curAuth.userId);
+
+        await this.authService.resetPassword(curAuth.id, body.password);
+
+        const userToken = this.authService.generateJwtToken(
+            user.id,
+            user.userType.name,
         );
 
         return {
