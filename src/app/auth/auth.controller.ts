@@ -56,7 +56,7 @@ export class AuthController {
             newUser?.id,
             newUser?.userType?.name,
         );
-        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`; // TODO: generate realtime host
+        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`;
 
         return {
             id: newUser.id,
