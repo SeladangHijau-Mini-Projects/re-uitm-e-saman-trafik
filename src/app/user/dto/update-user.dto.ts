@@ -25,14 +25,6 @@ export class UpdateUserDto {
     @IsOptional()
     readonly userCode: string;
 
-    @ApiProperty({
-        description: 'User password',
-        example: 'newpassword',
-    })
-    @IsString()
-    @IsOptional()
-    readonly password: string;
-
     @ApiProperty({ description: 'User full name', example: 'John Doe' })
     @IsString()
     @IsOptional()
@@ -55,4 +47,8 @@ export class UpdateUserDto {
     @IsBoolean()
     @IsOptional()
     readonly firstTimer: boolean;
+
+    @ApiProperty({ description: 'User email', example: 'test@email.com' })
+    @IsString()
+    readonly email: string;
 }

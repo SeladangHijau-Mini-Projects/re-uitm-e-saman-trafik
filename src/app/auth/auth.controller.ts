@@ -28,8 +28,12 @@ export class AuthController {
     @Post('login')
     async login(@Body() body: LoginDto): Promise<LoggedInDto> {
         const user = await this.userService.findOneByUserCode(body.username);
+        if (!user) {
+            throw new ResourceNotFoundException('User not found.');
+        }
 
-        if (user?.password != body.password) {
+        const auth = await this.authService.findOneByUserId(user.id);
+        if (auth?.password != body.password) {
             throw new UnauthorizedException('Unauthorized user.');
         }
 
@@ -62,7 +66,7 @@ export class AuthController {
 
         // send registration email
         await this.mailService.sendRegistrationEmail(
-            'nadzmiidzham@gmail.com',
+            newUser.email,
             resetPasswordUrl,
         );
 
@@ -97,6 +101,13 @@ export class AuthController {
         const userToken = this.authService.generateJwtToken(
             user.id,
             user.userType.name,
+        );
+        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${userToken}`; // TODO: set real url for reset password
+
+        // send forgot password email
+        await this.mailService.sendForgotPasswordEmail(
+            user.email,
+            resetPasswordUrl,
         );
 
         return {
