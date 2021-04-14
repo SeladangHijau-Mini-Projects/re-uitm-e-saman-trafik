@@ -60,7 +60,7 @@ export class AuthController {
         );
         const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`; // TODO: set real url for reset password
 
-        // send email new account has been created
+        // send registration email
         await this.mailService.sendRegistrationEmail(
             'nadzmiidzham@gmail.com',
             resetPasswordUrl,
