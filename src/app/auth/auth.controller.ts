@@ -61,6 +61,7 @@ export class AuthController {
         const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`; // TODO: set real url for reset password
 
         // send registration email
+        // TODO: use user email
         await this.mailService.sendRegistrationEmail(
             'nadzmiidzham@gmail.com',
             resetPasswordUrl,
@@ -97,6 +98,14 @@ export class AuthController {
         const userToken = this.authService.generateJwtToken(
             user.id,
             user.userType.name,
+        );
+        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${userToken}`; // TODO: set real url for reset password
+
+        // send forgot password email
+        // TODO: use user email
+        await this.mailService.sendForgotPasswordEmail(
+            'nadzmiidzham@gmail.com',
+            resetPasswordUrl,
         );
 
         return {

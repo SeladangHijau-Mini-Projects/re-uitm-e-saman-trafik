@@ -18,4 +18,18 @@ export class MailService {
             },
         });
     }
+
+    async sendForgotPasswordEmail(
+        to: string,
+        resetPasswordUrl: string,
+    ): Promise<void> {
+        await this.mailerService.sendMail({
+            to,
+            subject: 'Forgot Password',
+            template: 'forgot-password',
+            context: {
+                resetPasswordUrl,
+            },
+        });
+    }
 }
