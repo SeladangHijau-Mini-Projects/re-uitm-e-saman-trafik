@@ -28,8 +28,12 @@ export class AuthController {
     @Post('login')
     async login(@Body() body: LoginDto): Promise<LoggedInDto> {
         const user = await this.userService.findOneByUserCode(body.username);
+        if (!user) {
+            throw new ResourceNotFoundException('User not found.');
+        }
 
-        if (user?.password != body.password) {
+        const auth = await this.authService.findOneByUserId(user.id);
+        if (auth?.password != body.password) {
             throw new UnauthorizedException('Unauthorized user.');
         }
 
@@ -61,9 +65,8 @@ export class AuthController {
         const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`; // TODO: set real url for reset password
 
         // send registration email
-        // TODO: use user email
         await this.mailService.sendRegistrationEmail(
-            'nadzmiidzham@gmail.com',
+            newUser.email,
             resetPasswordUrl,
         );
 
@@ -102,9 +105,8 @@ export class AuthController {
         const resetPasswordUrl = `${process.env.HOST}/forgot-password/${userToken}`; // TODO: set real url for reset password
 
         // send forgot password email
-        // TODO: use user email
         await this.mailService.sendForgotPasswordEmail(
-            'nadzmiidzham@gmail.com',
+            user.email,
             resetPasswordUrl,
         );
 

@@ -30,10 +30,6 @@ export class UserEntity {
     @Expose()
     userCode: string;
 
-    @Column({ name: 'password' })
-    @Expose()
-    password: string;
-
     @Column({ name: 'fullname' })
     @Expose()
     fullname: string;
@@ -45,6 +41,10 @@ export class UserEntity {
     @Column({ name: 'office_tel_no' })
     @Expose()
     officeTelNo: string;
+
+    @Column({ name: 'email' })
+    @Expose()
+    email: string;
 
     @Column({ name: 'first_timer' })
     @Expose()

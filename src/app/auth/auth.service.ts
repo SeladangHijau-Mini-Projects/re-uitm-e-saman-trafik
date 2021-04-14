@@ -23,6 +23,10 @@ export class AuthService {
         });
     }
 
+    async findOneByUserId(userId: number): Promise<AuthEntity> {
+        return this.authRepository.findOne({ userId });
+    }
+
     async findByResetToken(resetToken: string): Promise<AuthEntity> {
         return this.authRepository.findOne({ resetToken });
     }
