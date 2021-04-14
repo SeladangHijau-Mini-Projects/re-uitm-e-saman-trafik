@@ -26,6 +26,7 @@
     "heroku-postbuild": "npm install --only=dev --no-shrinkwrap && npm run typeorm:migrate && npm run build"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.5.1",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.0.0",
@@ -37,10 +38,12 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "date-fns": "^2.19.0",
+    "handlebars": "^4.7.7",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "nest-logger": "^6.0.0",
     "nest-router": "^1.0.9",
+    "nodemailer": "^6.5.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",

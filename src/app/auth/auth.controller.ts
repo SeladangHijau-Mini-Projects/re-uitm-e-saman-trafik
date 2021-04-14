@@ -8,6 +8,7 @@ import {
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
+import { MailService } from '../mail/mail.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -21,6 +22,7 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
+        private readonly mailService: MailService,
     ) {}
 
     @Post('login')
@@ -57,6 +59,12 @@ export class AuthController {
             newUser?.userType?.name,
         );
         const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`;
+
+        // send email new account has been created
+        await this.mailService.sendRegistrationEmail(
+            'nadzmiidzham@gmail.com',
+            resetPasswordUrl,
+        );
 
         return {
             id: newUser.id,
