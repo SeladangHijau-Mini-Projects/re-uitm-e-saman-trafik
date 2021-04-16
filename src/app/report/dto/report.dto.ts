@@ -128,11 +128,11 @@ export class ReportDto {
             location: model?.location,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
-            remark: model?.reportHistories
-                ? model?.reportHistories.length > 0
-                    ? model?.reportHistories[0]?.remark
-                    : null
-                : null,
+            remark:
+                model?.reportHistories && model?.reportHistories.length > 0
+                    ? model?.reportHistories[model?.reportHistories.length - 1]
+                          ?.remark
+                    : null,
             transportStatus:
                 model?.reportTransport?.transportStatus?.description,
             transportType: model?.reportTransport?.transportType?.description,

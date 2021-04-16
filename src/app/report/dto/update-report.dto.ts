@@ -55,7 +55,6 @@ export class UpdateReportDto {
     @ApiProperty({ description: 'Report remark', example: 'Saja je' })
     @IsString()
     @IsNotEmpty()
-    @IsOptional()
     remark: string;
 
     @ApiProperty({ description: 'Transport plate no', example: 'QWE 123' })

@@ -19,9 +19,10 @@ import { CreateTransportDto } from '../transport/dto/create-transport.dto';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
-import { TrafficErrorService } from '../traffic-error/traffic-error.service';
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Report')
 @Controller()
 export class ReportController {
     constructor(
@@ -29,10 +30,17 @@ export class ReportController {
         private readonly studentService: StudentService,
         private readonly transportService: TransportService,
         private readonly userService: UserService,
-        private readonly trafficErrorService: TrafficErrorService,
     ) {}
 
     @Get()
+    @ApiOperation({ summary: 'Get multiple report.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: [ReportDto],
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async find(@Query() param: ReportQueryParamDto): Promise<ReportDto[]> {
         const reportList = await this.reportService.findAll(param);
 
@@ -40,6 +48,14 @@ export class ReportController {
     }
 
     @Get(':reportId')
+    @ApiOperation({ summary: 'Get single report.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: ReportDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findOne(
         @Param('reportId', ParseIntPipe) reportId: number,
     ): Promise<ReportDto> {
@@ -53,6 +69,14 @@ export class ReportController {
     }
 
     @Post()
+    @ApiOperation({ summary: 'Create report.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: ReportDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async create(@Body() body: SubmitReportDto): Promise<ReportDto> {
         // validate user
         const user = await this.userService.findOne(body.userId);
@@ -108,6 +132,14 @@ export class ReportController {
     }
 
     @Put(':reportId')
+    @ApiOperation({ summary: 'Update report.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: ReportDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async update(
         @Param('reportId', ParseIntPipe) reportId: number,
         @Body() body: UpdateReportDto,
