@@ -26,7 +26,7 @@ export class CreateTransportDto {
         example: TransportStatus.Na,
     })
     @IsEnum(TransportStatus)
-    status: string;
+    status: string = TransportStatus.Na;
 
     @ApiProperty({
         name: 'Transport plate no',

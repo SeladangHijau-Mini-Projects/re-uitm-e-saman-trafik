@@ -16,9 +16,7 @@ import { ReportDto } from './dto/report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportService } from './report.service';
 import { CreateTransportDto } from '../transport/dto/create-transport.dto';
-import { TransportStatus } from '../transport/enum/transport-status.enum';
 import { CreateReportDto } from './dto/create-report.dto';
-import { ReportStatus } from './enum/report-status.enum';
 import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { TrafficErrorService } from '../traffic-error/traffic-error.service';
@@ -89,19 +87,19 @@ export class ReportController {
                 plateNo: body.transportPlateNo,
                 passCode: body.transportPassCode,
                 type: body.transportType,
-                status: TransportStatus.Na,
+                status: body?.transportStatus,
             } as CreateTransportDto);
         }
 
         // create report
         const newReport = await this.reportService.create({
-            transportId: transport.id,
-            studentId: student.id,
-            location: body.location,
-            remark: body.remark,
-            status: ReportStatus.New,
-            userId: user.id,
-            trafficErrorList: body.trafficErrors,
+            transportId: transport?.id,
+            studentId: student?.id,
+            location: body?.location,
+            remark: body?.remark,
+            status: body?.status,
+            userId: user?.id,
+            trafficErrorList: body?.trafficErrors,
         } as CreateReportDto);
 
         return ReportDto.fromModel(
