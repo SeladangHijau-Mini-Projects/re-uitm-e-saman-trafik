@@ -5,6 +5,7 @@ import {
     Post,
     UnauthorizedException,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
@@ -17,6 +18,7 @@ import { LoginDto } from './dto/login.dto';
 import { PasswordResetDto } from './dto/password-reset.dto';
 import { RegisteredDto } from './dto/registered.dto';
 
+@ApiTags('Auth')
 @Controller()
 export class AuthController {
     constructor(
@@ -26,6 +28,14 @@ export class AuthController {
     ) {}
 
     @Post('login')
+    @ApiOperation({ summary: 'Login user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: LoggedInDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async login(@Body() body: LoginDto): Promise<LoggedInDto> {
         const user = await this.userService.findOneByUserCode(body.username);
         if (!user) {
@@ -48,6 +58,14 @@ export class AuthController {
     }
 
     @Post('register')
+    @ApiOperation({ summary: 'Register new user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: RegisteredDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async register(@Body() body: CreateUserDto): Promise<RegisteredDto> {
         const existingUser = await this.userService.findOneByUserCode(
             body.userCode,
@@ -78,6 +96,14 @@ export class AuthController {
     }
 
     @Post('forgot-password/:resetToken')
+    @ApiOperation({ summary: 'Set new password.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: LoggedInDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async forgotPassword(
         @Param('resetToken') resetToken: string,
         @Body() body: PasswordResetDto,
