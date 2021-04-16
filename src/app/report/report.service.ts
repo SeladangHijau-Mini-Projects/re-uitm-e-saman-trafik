@@ -141,10 +141,12 @@ export class ReportService {
         } as ReportEntity);
 
         // update traffic errors
-        await this.trafficErrorService.updateAll(
-            updatedReport.id,
-            dto.trafficErrors,
-        );
+        if (dto.trafficErrors && dto.trafficErrors.length > 0) {
+            await this.trafficErrorService.updateAll(
+                updatedReport.id,
+                dto.trafficErrors,
+            );
+        }
 
         // create new history with remark
         await this.reportHistoryRepository.save(

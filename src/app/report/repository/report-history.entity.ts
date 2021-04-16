@@ -14,7 +14,7 @@ import { ReportEntity } from './report.entity';
 
 @Entity('report_histories')
 export class ReportHistoryEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({ name: 'id' })
     @Expose()
     id: number;
 
@@ -62,7 +62,7 @@ export class ReportHistoryEntity {
         () => ReportEntity,
         (report: ReportEntity) => report.reportHistories,
     )
-    @JoinColumn({ name: 'id' })
+    @JoinColumn({ name: 'report_id' })
     reportHistoryReport: ReportEntity;
 
     @ManyToOne(
