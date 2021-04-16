@@ -2,7 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { College } from 'src/app/student/enum/college.enum';
 import { Course } from 'src/app/student/enum/course.enum';
+import { TransportStatus } from 'src/app/transport/enum/transport-status.enum';
 import { TransportType } from 'src/app/transport/enum/transport-type.enum';
+import { ReportStatus } from '../enum/report-status.enum';
 
 export class SubmitReportDto {
     @ApiProperty({ description: 'User ID', example: 1 })
@@ -16,6 +18,15 @@ export class SubmitReportDto {
     @ApiProperty({ description: 'Report remark', example: 'Saja je' })
     @IsString()
     remark: string;
+
+    @ApiProperty({
+        description: 'Report status',
+        enum: ReportStatus,
+        example: ReportStatus.New,
+    })
+    @IsEnum(ReportStatus)
+    @IsOptional()
+    status: string = ReportStatus.New;
 
     @ApiProperty({ description: 'Car plate no', example: 'QWE 123' })
     @IsString()
@@ -36,6 +47,15 @@ export class SubmitReportDto {
     })
     @IsEnum(TransportType)
     transportType: string;
+
+    @ApiProperty({
+        description: 'Student transport status',
+        enum: TransportStatus,
+        example: TransportStatus.Na,
+    })
+    @IsEnum(TransportStatus)
+    @IsOptional()
+    transportStatus: string = TransportStatus.Na;
 
     @ApiProperty({
         description: 'Traffic errors',
