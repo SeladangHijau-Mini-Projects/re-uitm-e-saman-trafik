@@ -1,8 +1,11 @@
 import { Expose } from 'class-transformer';
+import { ReportHistoryEntity } from 'src/app/report/repository/report-history.entity';
+import { ReportEntity } from 'src/app/report/repository/report.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -27,10 +30,6 @@ export class UserEntity {
     @Expose()
     userCode: string;
 
-    @Column({ name: 'password' })
-    @Expose()
-    password: string;
-
     @Column({ name: 'fullname' })
     @Expose()
     fullname: string;
@@ -42,6 +41,10 @@ export class UserEntity {
     @Column({ name: 'office_tel_no' })
     @Expose()
     officeTelNo: string;
+
+    @Column({ name: 'email' })
+    @Expose()
+    email: string;
 
     @Column({ name: 'first_timer' })
     @Expose()
@@ -62,4 +65,18 @@ export class UserEntity {
     @OneToOne(() => UserTypeEntity, { eager: true })
     @JoinColumn({ name: 'type_id' })
     userType: UserTypeEntity;
+
+    @OneToMany(
+        () => ReportEntity,
+        (report: ReportEntity) => report.reportUser,
+    )
+    @JoinColumn({ name: 'id' })
+    reports: ReportEntity[];
+
+    @OneToMany(
+        () => ReportHistoryEntity,
+        (reportHistory: ReportHistoryEntity) => reportHistory.reportHistoryUser,
+    )
+    @JoinColumn({ name: 'id' })
+    reportHistories: ReportHistoryEntity[];
 }

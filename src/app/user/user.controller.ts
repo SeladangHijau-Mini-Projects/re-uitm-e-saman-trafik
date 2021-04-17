@@ -4,26 +4,33 @@ import {
     Get,
     Param,
     ParseIntPipe,
-    Post,
     Put,
     Query,
     UseGuards,
 } from '@nestjs/common';
-import { ExistsException } from 'src/common/exception/exists.exception';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { AuthGuard } from 'src/common/guard/auth.guard';
-import { CreateUserDto } from './dto/create-user.dto';
 import { QueryParamUserDto } from './dto/query-param-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
+@ApiTags('User')
 @UseGuards(AuthGuard)
 @Controller()
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
+    @ApiOperation({ summary: 'Get multiple user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: [UserDto],
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findAll(@Query() query: QueryParamUserDto): Promise<UserDto[]> {
         const userList = await this.userService.findAll(query);
 
@@ -31,6 +38,14 @@ export class UserController {
     }
 
     @Get(':userId')
+    @ApiOperation({ summary: 'Get single user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: UserDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findOne(
         @Param('userId', ParseIntPipe) userId: number,
     ): Promise<UserDto> {
@@ -43,22 +58,15 @@ export class UserController {
         return UserDto.fromModel(user);
     }
 
-    @Post()
-    async create(@Body() body: CreateUserDto): Promise<UserDto> {
-        const existingUser = await this.userService.findOneByUserCode(
-            body.userCode,
-        );
-
-        if (existingUser) {
-            throw new ExistsException('User code exist.');
-        }
-
-        const newUser = await this.userService.create(body);
-
-        return UserDto.fromModel(newUser);
-    }
-
     @Put(':userId')
+    @ApiOperation({ summary: 'Update user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: UserDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async update(
         @Param('userId', ParseIntPipe) userId: number,
         @Body() body: UpdateUserDto,

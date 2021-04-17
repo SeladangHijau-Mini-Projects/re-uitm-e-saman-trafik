@@ -66,8 +66,8 @@ export class UserService {
             fullname: dto.fullname,
             phoneTelNo: dto.phoneTelNo,
             officeTelNo: dto.officeTelNo,
+            email: dto.email,
             firstTimer: true,
-            password: 'New Password', // TODO: need to give default value
             userRank: rank,
             userType: type,
         } as UserEntity);
@@ -90,11 +90,11 @@ export class UserService {
                 rankId: rank?.id ?? user.rankId,
                 typeId: type?.id ?? user.typeId,
                 userCode: dto?.userCode ?? user.userCode,
-                password: dto?.password ?? user.password,
                 fullname: dto?.fullname ?? user.fullname,
                 phoneTelNo: dto?.phoneTelNo ?? user.phoneTelNo,
                 officeTelNo: dto?.officeTelNo ?? user.officeTelNo,
                 firstTimer: dto?.firstTimer ?? user.firstTimer,
+                email: dto?.email ?? user.email,
                 userRank: rank ?? user.userRank,
                 userType: type ?? user.userType,
             } as UserEntity,
