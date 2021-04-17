@@ -1,10 +1,16 @@
-import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Param,
+    Post,
+    UnauthorizedException,
+} from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
-import { UnauthorizedException } from 'src/common/exception/unauthorized.exception';
+import { MailService } from '../mail/mail.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UpdateUserDto } from '../user/dto/update-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoggedInDto } from './dto/logged-in.dto';
@@ -12,22 +18,36 @@ import { LoginDto } from './dto/login.dto';
 import { PasswordResetDto } from './dto/password-reset.dto';
 import { RegisteredDto } from './dto/registered.dto';
 
+@ApiTags('Auth')
 @Controller()
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
+        private readonly mailService: MailService,
     ) {}
 
     @Post('login')
+    @ApiOperation({ summary: 'Login user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: LoggedInDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async login(@Body() body: LoginDto): Promise<LoggedInDto> {
         const user = await this.userService.findOneByUserCode(body.username);
+        if (!user) {
+            throw new ResourceNotFoundException('User not found.');
+        }
 
-        if (user?.password != body.password) {
+        const auth = await this.authService.findOneByUserId(user.id);
+        if (auth?.password != body.password) {
             throw new UnauthorizedException('Unauthorized user.');
         }
 
-        const userToken = this.authService.generateToken(
+        const userToken = this.authService.generateJwtToken(
             user.id,
             user.userType.name,
         );
@@ -38,17 +58,35 @@ export class AuthController {
     }
 
     @Post('register')
+    @ApiOperation({ summary: 'Register new user.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: RegisteredDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async register(@Body() body: CreateUserDto): Promise<RegisteredDto> {
         const existingUser = await this.userService.findOneByUserCode(
             body.userCode,
         );
 
         if (existingUser) {
-            throw new ExistsException('User code exist.');
+            throw new ExistsException(`User code '${body.userCode}' exist.`);
         }
 
         const newUser = await this.userService.create(body);
-        const resetPasswordUrl = `${process.env.HOST}/v1/auth/forgot-password/${newUser.id}`; // TODO: need to generate a correct URL for reset password
+        const newAuth = await this.authService.generateAuth(
+            newUser?.id,
+            newUser?.userType?.name,
+        );
+        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`; // TODO: set real url for reset password
+
+        // send registration email
+        await this.mailService.sendRegistrationEmail(
+            newUser.email,
+            resetPasswordUrl,
+        );
 
         return {
             id: newUser.id,
@@ -57,35 +95,45 @@ export class AuthController {
         } as RegisteredDto;
     }
 
-    @Post('forgot-password/:userId')
+    @Post('forgot-password/:resetToken')
+    @ApiOperation({ summary: 'Set new password.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: LoggedInDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async forgotPassword(
-        @Param('userId', ParseIntPipe) userId: number,
+        @Param('resetToken') resetToken: string,
         @Body() body: PasswordResetDto,
     ): Promise<LoggedInDto> {
-        const user = await this.userService.findOne(userId);
-
-        if (!user) {
-            throw new ResourceNotFoundException('User ID not found.');
-        }
-
         if (body.password != body.confirmPassword) {
             throw new InvalidValueException(
                 `Both password & confirmPassword field is not equal.`,
             );
         }
-        if (user.password == body.password) {
-            throw new InvalidValueException(
-                'Password must not be the same as previously set.',
-            );
+
+        const auth = await this.authService.findByResetToken(resetToken);
+        if (!auth) {
+            throw new ResourceNotFoundException('Reset token not found.');
         }
 
-        const updatedUser = await this.userService.update(user, {
-            password: body.password,
-            firstTimer: false,
-        } as UpdateUserDto);
-        const userToken = this.authService.generateToken(
-            updatedUser.id,
-            updatedUser.userType.name,
+        const curAuth = await this.authService.findByResetToken(resetToken);
+        const user = await this.userService.findOne(curAuth.userId);
+
+        await this.authService.resetPassword(curAuth.id, body.password);
+
+        const userToken = this.authService.generateJwtToken(
+            user.id,
+            user.userType.name,
+        );
+        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${userToken}`; // TODO: set real url for reset password
+
+        // send forgot password email
+        await this.mailService.sendForgotPasswordEmail(
+            user.email,
+            resetPasswordUrl,
         );
 
         return {

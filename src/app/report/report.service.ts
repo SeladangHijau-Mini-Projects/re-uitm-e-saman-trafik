@@ -1,0 +1,166 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StudentService } from '../student/student.service';
+import { TrafficErrorService } from '../traffic-error/traffic-error.service';
+import { TransportService } from '../transport/transport.service';
+import { UserService } from '../user/user.service';
+import { CreateReportDto } from './dto/create-report.dto';
+import { ReportQueryParamDto } from './dto/report-query-param.dto';
+import { UpdateReportDto } from './dto/update-report.dto';
+import { ReportQueryFilter } from './query-filter/report.query-filter';
+import { ReportHistoryEntity } from './repository/report-history.entity';
+import { ReportStatusEntity } from './repository/report-status.entity';
+import { ReportEntity } from './repository/report.entity';
+
+@Injectable()
+export class ReportService {
+    constructor(
+        @InjectRepository(ReportEntity)
+        private readonly reportRepository: Repository<ReportEntity>,
+        @InjectRepository(ReportHistoryEntity)
+        private readonly reportHistoryRepository: Repository<
+            ReportHistoryEntity
+        >,
+        @InjectRepository(ReportStatusEntity)
+        private readonly reportStatusRepository: Repository<ReportStatusEntity>,
+        private readonly trafficErrorService: TrafficErrorService,
+        private readonly transportService: TransportService,
+        private readonly studentService: StudentService,
+        private readonly userService: UserService,
+    ) {}
+
+    async findAll(dto: ReportQueryParamDto): Promise<ReportEntity[]> {
+        if (dto.status) {
+            const status = await this.reportStatusRepository.findOne({
+                name: dto.status,
+            });
+
+            dto = {
+                ...dto,
+                statusId: status?.id,
+            } as ReportQueryParamDto;
+        }
+        if (dto.transportPlateNo) {
+            const transport = await this.transportService.findOneByPlateNo(
+                dto.transportPlateNo,
+            );
+
+            dto = {
+                ...dto,
+                transportId: transport?.id,
+            } as ReportQueryParamDto;
+        }
+        if (dto.studentCode) {
+            const student = await this.studentService.findOneByStudentCode(
+                dto.studentCode,
+            );
+
+            dto = {
+                ...dto,
+                studentId: student?.id,
+            } as ReportQueryParamDto;
+        }
+        if (dto.userCode) {
+            const user = await this.userService.findOneByUserCode(dto.userCode);
+
+            dto = {
+                ...dto,
+                userId: user?.id,
+            } as ReportQueryParamDto;
+        }
+
+        const query = new ReportQueryFilter(dto).toTypeormQuery();
+        query.relations = ['reportHistories', 'reportReportTrafficErrors'];
+
+        return this.reportRepository.find(query);
+    }
+
+    async findOne(reportId: number): Promise<ReportEntity> {
+        return this.reportRepository.findOne(reportId, {
+            relations: ['reportHistories', 'reportReportTrafficErrors'],
+        });
+    }
+
+    async findStatus(status: string): Promise<ReportStatusEntity> {
+        return this.reportStatusRepository.findOne({ name: status });
+    }
+
+    async create(dto: CreateReportDto): Promise<ReportEntity> {
+        const status = await this.reportStatusRepository.findOne({
+            name: dto.status,
+        });
+
+        // create new report
+        const report = await this.reportRepository.save({
+            reportStatus: status,
+            transportId: dto.transportId,
+            userId: dto.userId,
+            studentId: dto.studentId,
+            location: dto.location,
+        } as ReportEntity);
+
+        // create new report history
+        if (report) {
+            // add report history
+            await this.reportHistoryRepository.save({
+                reportId: report.id,
+                statusId: report.statusId,
+                userId: report.userId,
+                transportId: report.transportId,
+                location: report.location,
+                remark: dto.remark,
+            } as ReportHistoryEntity);
+
+            // create traffic error
+            await this.trafficErrorService.createAll(
+                report.id,
+                dto.trafficErrorList,
+            );
+        }
+
+        return report;
+    }
+
+    async update(
+        reportId: number,
+        dto: UpdateReportDto,
+    ): Promise<ReportEntity> {
+        const status = await this.reportStatusRepository.findOne({
+            name: dto.status,
+        });
+
+        // update report
+        const updatedReport = await this.reportRepository.save({
+            id: reportId,
+            reportStatus: status,
+            transportId: dto.transportId,
+            userId: dto.userId,
+            studentId: dto.studentId,
+            location: dto.location,
+        } as ReportEntity);
+
+        // update traffic errors
+        if (dto.trafficErrors && dto.trafficErrors.length > 0) {
+            await this.trafficErrorService.updateAll(
+                updatedReport.id,
+                dto.trafficErrors,
+            );
+        }
+
+        // create new history with remark
+        await this.reportHistoryRepository.save(
+            {
+                reportId: updatedReport.id,
+                reportHistoryStatus: status,
+                userId: updatedReport.userId,
+                transportId: updatedReport.transportId,
+                location: updatedReport.location,
+                remark: dto.remark,
+            } as ReportHistoryEntity,
+            { reload: true },
+        );
+
+        return updatedReport;
+    }
+}

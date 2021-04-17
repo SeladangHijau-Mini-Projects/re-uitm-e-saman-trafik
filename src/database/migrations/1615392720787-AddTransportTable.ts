@@ -38,6 +38,7 @@ export class AddTransportTable1615392720787 implements MigrationInterface {
                     {
                         name: 'pass_code',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

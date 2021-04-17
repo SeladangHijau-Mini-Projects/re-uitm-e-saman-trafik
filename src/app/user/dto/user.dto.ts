@@ -46,9 +46,14 @@ export class UserDto {
     @IsBoolean()
     readonly firstTimer: boolean;
 
-    static fromModel(model: UserEntity): UserDto {
-        console.log('model: ', model);
+    @ApiProperty({
+        description: 'User email',
+        example: true,
+    })
+    @IsBoolean()
+    readonly email: string;
 
+    static fromModel(model: UserEntity): UserDto {
         return {
             id: model?.id,
             rank: model?.userRank?.name,
@@ -58,6 +63,7 @@ export class UserDto {
             phoneTelNo: model?.phoneTelNo,
             officeTelNo: model?.officeTelNo,
             firstTimer: model?.firstTimer,
+            email: model.email,
         } as UserDto;
     }
 }

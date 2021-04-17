@@ -39,4 +39,9 @@ export class CreateUserDto {
     @IsNumberString()
     @IsNotEmpty()
     readonly officeTelNo: string;
+
+    @ApiProperty({ description: 'User email', example: 'test@email.com' })
+    @IsString()
+    @IsNotEmpty()
+    readonly email: string;
 }
