@@ -102,7 +102,7 @@ export class AuthController {
         } as RegisteredDto;
     }
 
-    @Get(':userId/reset-password')
+    @Get(':userCode/reset-password')
     @ApiOperation({ summary: 'Set new password.' })
     @ApiResponse({
         status: 200,
@@ -112,12 +112,12 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async requestForgotPassword(
-        @Param('userId') userId: number,
+        @Param('userCode') userCode: string,
     ): Promise<RequestPasswordResetDto> {
-        const user = await this.userService.findOne(userId);
+        const user = await this.userService.findOneByUserCode(userCode);
         if (!user) {
             throw new ResourceNotFoundException(
-                `User ID '${userId}' was not found.`,
+                `User Code '${userCode}' was not found.`,
             );
         }
 
