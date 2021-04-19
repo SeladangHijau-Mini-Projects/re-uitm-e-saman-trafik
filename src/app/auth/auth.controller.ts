@@ -53,6 +53,7 @@ export class AuthController {
         );
 
         return {
+            userId: user.id,
             userToken,
         } as LoggedInDto;
     }
