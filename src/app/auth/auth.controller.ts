@@ -5,6 +5,7 @@ import {
     Post,
     UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
@@ -25,6 +26,7 @@ export class AuthController {
         private readonly authService: AuthService,
         private readonly userService: UserService,
         private readonly mailService: MailService,
+        private readonly configService: ConfigService,
     ) {}
 
     @Post('login')
@@ -81,7 +83,9 @@ export class AuthController {
             newUser?.id,
             newUser?.userType?.name,
         );
-        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${newAuth.resetToken}`; // TODO: set real url for reset password
+        const resetPasswordUrl = `${this.configService.get<string>(
+            'APP_RESET_PASSWORD_URL',
+        )}?token=${newAuth.resetToken}`;
 
         // send registration email
         await this.mailService.sendRegistrationEmail(
@@ -128,13 +132,6 @@ export class AuthController {
         const userToken = this.authService.generateJwtToken(
             user.id,
             user.userType.name,
-        );
-        const resetPasswordUrl = `${process.env.HOST}/forgot-password/${userToken}`; // TODO: set real url for reset password
-
-        // send forgot password email
-        await this.mailService.sendForgotPasswordEmail(
-            user.email,
-            resetPasswordUrl,
         );
 
         return {
