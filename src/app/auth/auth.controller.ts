@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Get,
     Param,
     Post,
     UnauthorizedException,
@@ -18,6 +19,7 @@ import { LoggedInDto } from './dto/logged-in.dto';
 import { LoginDto } from './dto/login.dto';
 import { PasswordResetDto } from './dto/password-reset.dto';
 import { RegisteredDto } from './dto/registered.dto';
+import { RequestPasswordResetDto } from './dto/request-password-reset.dto';
 
 @ApiTags('Auth')
 @Controller()
@@ -100,7 +102,46 @@ export class AuthController {
         } as RegisteredDto;
     }
 
-    @Post('forgot-password/:resetToken')
+    @Get(':userId/reset-password')
+    @ApiOperation({ summary: 'Set new password.' })
+    @ApiResponse({
+        status: 200,
+        description: 'Success',
+        type: LoggedInDto,
+    })
+    @ApiResponse({ status: 401, description: 'Unauthorized.' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+    async requestForgotPassword(
+        @Param('userId') userId: number,
+    ): Promise<RequestPasswordResetDto> {
+        const user = await this.userService.findOne(userId);
+        if (!user) {
+            throw new ResourceNotFoundException(
+                `User ID '${userId}' was not found.`,
+            );
+        }
+
+        const newAuth = await this.authService.generateAuth(
+            user.id,
+            user.userType.name,
+        );
+        const resetPasswordUrl = `${this.configService.get<string>(
+            'APP_RESET_PASSWORD_URL',
+        )}?token=${newAuth.resetToken}`;
+
+        // send registration email
+        await this.mailService.sendForgotPasswordEmail(
+            user.email,
+            resetPasswordUrl,
+        );
+
+        return {
+            resetToken: newAuth.resetToken,
+            resetPasswordUrl,
+        } as RequestPasswordResetDto;
+    }
+
+    @Post('reset-password/:resetToken')
     @ApiOperation({ summary: 'Set new password.' })
     @ApiResponse({
         status: 200,
