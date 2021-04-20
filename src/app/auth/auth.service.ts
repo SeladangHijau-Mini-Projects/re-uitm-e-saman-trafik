@@ -32,25 +32,22 @@ export class AuthService {
     }
 
     async generateAuth(userId: number, userType: string): Promise<AuthEntity> {
-        const auth = await this.authRepository.findOne({ userId });
+        let auth = await this.authRepository.findOne({ userId });
 
-        let newAuth = null;
         if (auth) {
-            newAuth = {
-                id: auth.id,
-                userId,
-                password: auth?.password,
+            auth = {
+                ...auth,
                 resetToken: this.generateResetToken(userId, userType),
             } as AuthEntity;
         } else {
-            newAuth = {
+            auth = {
                 userId,
                 password: 'new password',
                 resetToken: this.generateResetToken(userId, userType),
             } as AuthEntity;
         }
 
-        return this.authRepository.save(newAuth);
+        return this.authRepository.save(auth);
     }
 
     async resetPassword(
