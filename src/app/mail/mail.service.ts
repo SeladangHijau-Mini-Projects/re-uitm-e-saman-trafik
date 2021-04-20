@@ -9,18 +9,14 @@ export class MailService {
         to: string,
         resetPasswordUrl: string,
     ): Promise<void> {
-        // TODO: remove console.log before release
-        console.log(
-            'send email: ',
-            await this.mailerService.sendMail({
-                to,
-                subject: 'New User',
-                template: 'registration',
-                context: {
-                    resetPasswordUrl,
-                },
-            }),
-        );
+        await this.mailerService.sendMail({
+            to,
+            subject: 'New User',
+            template: 'registration',
+            context: {
+                resetPasswordUrl,
+            },
+        });
     }
 
     async sendForgotPasswordEmail(

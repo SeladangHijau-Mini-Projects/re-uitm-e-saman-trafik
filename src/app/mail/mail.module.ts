@@ -11,8 +11,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService): MailerOptions => {
-                console.log('__dirname: ', __dirname); // TODO: remove before release
-
                 return {
                     transport: {
                         host: configService.get<string>('MAIL_HOST'),
