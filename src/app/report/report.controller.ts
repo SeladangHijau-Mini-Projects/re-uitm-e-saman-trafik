@@ -7,7 +7,6 @@ import {
     Post,
     Put,
     Query,
-    UseGuards,
 } from '@nestjs/common';
 import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
@@ -22,10 +21,8 @@ import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/common/guard/auth.guard';
 
 @ApiTags('Report')
-@UseGuards(AuthGuard)
 @Controller()
 export class ReportController {
     constructor(
