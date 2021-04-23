@@ -29,6 +29,14 @@ export class TransportService {
         return this.transportRepository.findOne({ plateNo });
     }
 
+    async findAllStatus(): Promise<TransportStatusEntity[]> {
+        return this.transportStatusRepository.find();
+    }
+
+    async findAllType(): Promise<TransportTypeEntity[]> {
+        return this.transportTypeRepository.find();
+    }
+
     async create(dto: CreateTransportDto): Promise<TransportEntity> {
         const type = await this.transportTypeRepository.findOne({
             name: dto.type,

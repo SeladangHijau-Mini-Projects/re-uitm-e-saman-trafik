@@ -28,6 +28,18 @@ export class StudentService {
         return this.studentRepository.findOne({ studentCode });
     }
 
+    async findAllCollege(): Promise<CollegeEntity[]> {
+        return this.collegeRepository.find();
+    }
+
+    async findAllCourse(): Promise<CourseEntity[]> {
+        return this.courseRepository.find();
+    }
+
+    async findAllFaculty(): Promise<FacultyEntity[]> {
+        return this.facultyRepository.find();
+    }
+
     async create(dto: CreateStudentDto): Promise<StudentEntity> {
         const course = await this.courseRepository.findOne({
             name: dto.course,

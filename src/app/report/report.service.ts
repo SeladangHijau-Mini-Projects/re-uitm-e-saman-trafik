@@ -86,6 +86,10 @@ export class ReportService {
         return this.reportStatusRepository.findOne({ name: status });
     }
 
+    async findAllStatus(): Promise<ReportStatusEntity[]> {
+        return this.reportStatusRepository.find();
+    }
+
     async create(dto: CreateReportDto): Promise<ReportEntity> {
         const status = await this.reportStatusRepository.findOne({
             name: dto.status,

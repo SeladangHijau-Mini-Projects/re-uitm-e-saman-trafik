@@ -55,6 +55,14 @@ export class UserService {
         return this.userRepository.findOne({ userCode });
     }
 
+    async findAllRank(): Promise<UserRankEntity[]> {
+        return this.userRankRepository.find();
+    }
+
+    async findAllType(): Promise<UserTypeEntity[]> {
+        return this.userTypeRepository.find();
+    }
+
     async create(dto: CreateUserDto): Promise<UserEntity> {
         const rank = await this.userRankRepository.findOne({ name: dto.rank });
         const type = await this.userTypeRepository.findOne({ name: dto.type });
