@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import { College } from '../enum/college.enum';
 import { Course } from '../enum/course.enum';
 import { StudentEntity } from '../repository/student.entity';
@@ -14,7 +14,7 @@ export class StudentDetailDto {
         enum: Course,
         example: Course.Cs230,
     })
-    @IsString()
+    @IsEnum(Course)
     course: string;
 
     @ApiProperty({
@@ -22,7 +22,7 @@ export class StudentDetailDto {
         enum: College,
         example: College.Delima,
     })
-    @IsString()
+    @IsEnum(College)
     college: string;
 
     @ApiProperty({

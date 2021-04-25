@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
-import { College } from '../enum/college.enum';
-import { Course } from '../enum/course.enum';
 import { StudentEntity } from '../repository/student.entity';
 
 export class StudentSummaryDto {
@@ -10,17 +8,15 @@ export class StudentSummaryDto {
     id: number;
 
     @ApiProperty({
-        description: 'Course name',
-        enum: Course,
-        example: Course.Cs230,
+        description: 'Course name value',
+        example: 'Ijazah Sarjana Muda Sains Komputer Dan Matematik',
     })
     @IsString()
     course: string;
 
     @ApiProperty({
-        description: 'College name',
-        enum: College,
-        example: College.Delima,
+        description: 'College name value',
+        example: 'Delima',
     })
     @IsString()
     college: string;

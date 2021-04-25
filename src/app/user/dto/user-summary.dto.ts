@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber, IsNumberString, IsString } from 'class-validator';
-import { UserRank } from '../enum/user-rank.enum';
-import { UserType } from '../enum/user-type.enum';
 import { UserEntity } from '../repository/user.entity';
 
 export class UserSummaryDto {
@@ -9,11 +7,11 @@ export class UserSummaryDto {
     @IsNumber()
     readonly id: number;
 
-    @ApiProperty({ description: 'User rank', enum: UserRank, example: 'ur1' })
+    @ApiProperty({ description: 'User rank', example: 'Jawatan 1' })
     @IsString()
     readonly rank: string;
 
-    @ApiProperty({ description: 'User type', enum: UserType, example: 'admin' })
+    @ApiProperty({ description: 'User type', example: 'Admin' })
     @IsString()
     readonly type: string;
 

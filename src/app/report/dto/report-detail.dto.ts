@@ -17,6 +17,7 @@ export class ReportDetailDto {
     @ApiProperty({
         description: 'Report status key',
         example: ReportStatus.New,
+        enum: ReportStatus,
     })
     @IsEnum(ReportStatusEntity)
     status: string;
@@ -49,6 +50,7 @@ export class ReportDetailDto {
     @ApiProperty({
         description: 'Transport status key',
         example: TransportStatus.Locked,
+        enum: TransportStatus,
     })
     @IsEnum(TransportStatus)
     transportStatus: string;
@@ -56,6 +58,7 @@ export class ReportDetailDto {
     @ApiProperty({
         description: 'Transport type key',
         example: TransportType.Car,
+        enum: TransportType,
     })
     @IsEnum(TransportType)
     transportType: string;
@@ -91,6 +94,7 @@ export class ReportDetailDto {
     @ApiProperty({
         description: 'Student course key',
         example: Course.Cs230,
+        enum: Course,
     })
     @IsEnum(Course)
     studentCourse: string;
@@ -98,6 +102,7 @@ export class ReportDetailDto {
     @ApiProperty({
         description: 'Student faculty key',
         example: Faculty.Fskm,
+        enum: Faculty,
     })
     @IsEnum(Faculty)
     studentFaculty: string;
@@ -105,6 +110,7 @@ export class ReportDetailDto {
     @ApiProperty({
         description: 'Student college key',
         example: College.Delima,
+        enum: College,
     })
     @IsEnum(College)
     studentCollege: string;
