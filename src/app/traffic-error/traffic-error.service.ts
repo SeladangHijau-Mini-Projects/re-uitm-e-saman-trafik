@@ -16,6 +16,10 @@ export class TrafficErrorService {
         >,
     ) {}
 
+    async findAllError(): Promise<TrafficErrorEntity[]> {
+        return this.trafficErrorRepository.find();
+    }
+
     async findByNameList(nameList: string[]): Promise<TrafficErrorEntity[]> {
         const trafficErrorList = [];
 

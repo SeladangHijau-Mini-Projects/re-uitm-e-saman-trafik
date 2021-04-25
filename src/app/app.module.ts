@@ -10,6 +10,7 @@ import { StudentModule } from './student/student.module';
 import { TransportModule } from './transport/transport.module';
 import { TrafficErrorModule } from './traffic-error/traffic-error.module';
 import { MailModule } from './mail/mail.module';
+import { LookupModule } from './lookup/lookup.module';
 
 const routes: Routes = [
     {
@@ -31,6 +32,10 @@ const routes: Routes = [
                 path: '/report',
                 module: ReportModule,
             },
+            {
+                path: '/lookup',
+                module: LookupModule,
+            },
         ],
     },
 ];
@@ -48,6 +53,7 @@ const routes: Routes = [
         TransportModule,
         TrafficErrorModule,
         MailModule,
+        LookupModule,
     ],
 })
 export class AppModule {}
