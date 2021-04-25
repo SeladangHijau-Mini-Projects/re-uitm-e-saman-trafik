@@ -4,7 +4,7 @@ import { College } from '../enum/college.enum';
 import { Course } from '../enum/course.enum';
 import { StudentEntity } from '../repository/student.entity';
 
-export class StudentSummaryDto {
+export class StudentDto {
     @ApiProperty({ description: 'Student ID', example: 1 })
     @IsNumber()
     id: number;
@@ -39,13 +39,13 @@ export class StudentSummaryDto {
     @IsString()
     fullname: string;
 
-    static fromModel(model: StudentEntity): StudentSummaryDto {
+    static fromModel(model: StudentEntity): StudentDto {
         return {
             id: model?.id,
             course: model?.studentCourse?.name,
             college: model?.studentCollege?.name,
             studentCode: model?.studentCode,
             fullname: model?.fullname,
-        } as StudentSummaryDto;
+        } as StudentDto;
     }
 }
