@@ -13,7 +13,6 @@ import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
 import { TransportService } from '../transport/transport.service';
 import { SubmitReportDto } from './dto/submit-report.dto';
-import { ReportDto } from './dto/report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportService } from './report.service';
 import { CreateTransportDto } from '../transport/dto/create-transport.dto';
@@ -23,6 +22,8 @@ import { ResourceNotFoundException } from 'src/common/exception/resource-not-fou
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guard/auth.guard';
+import { ReportSummaryDto } from './dto/report-summary.dto';
+import { ReportDetailDto } from './dto/report-detail.dto';
 
 @ApiTags('Report')
 @UseGuards(AuthGuard)
@@ -40,14 +41,16 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: [ReportDto],
+        type: [ReportSummaryDto],
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-    async find(@Query() param: ReportQueryParamDto): Promise<ReportDto[]> {
+    async find(
+        @Query() param: ReportQueryParamDto,
+    ): Promise<ReportSummaryDto[]> {
         const reportList = await this.reportService.findAll(param);
 
-        return reportList.map(ReportDto.fromModel);
+        return reportList.map(ReportSummaryDto.fromModel);
     }
 
     @Get(':reportId')
@@ -55,20 +58,20 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: ReportDto,
+        type: ReportDetailDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findOne(
         @Param('reportId', ParseIntPipe) reportId: number,
-    ): Promise<ReportDto> {
+    ): Promise<ReportDetailDto> {
         const report = await this.reportService.findOne(reportId);
 
         if (!report) {
             throw new ResourceNotFoundException('Report ID not found.');
         }
 
-        return ReportDto.fromModel(report);
+        return ReportDetailDto.fromModel(report);
     }
 
     @Post()
@@ -76,11 +79,11 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: ReportDto,
+        type: ReportDetailDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-    async create(@Body() body: SubmitReportDto): Promise<ReportDto> {
+    async create(@Body() body: SubmitReportDto): Promise<ReportDetailDto> {
         // validate user
         const user = await this.userService.findOne(body.userId);
         if (!user) {
@@ -129,7 +132,7 @@ export class ReportController {
             trafficErrorList: body?.trafficErrors,
         } as CreateReportDto);
 
-        return ReportDto.fromModel(
+        return ReportDetailDto.fromModel(
             await this.reportService.findOne(newReport.id),
         );
     }
@@ -139,14 +142,14 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: ReportDto,
+        type: ReportDetailDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async update(
         @Param('reportId', ParseIntPipe) reportId: number,
         @Body() body: UpdateReportDto,
-    ): Promise<ReportDto> {
+    ): Promise<ReportDetailDto> {
         // validate report
         const report = await this.reportService.findOne(reportId);
         if (!report) {
@@ -188,6 +191,8 @@ export class ReportController {
             trafficErrors: body.trafficErrors,
         } as UpdateReportDto);
 
-        return ReportDto.fromModel(await this.reportService.findOne(reportId));
+        return ReportDetailDto.fromModel(
+            await this.reportService.findOne(reportId),
+        );
     }
 }
