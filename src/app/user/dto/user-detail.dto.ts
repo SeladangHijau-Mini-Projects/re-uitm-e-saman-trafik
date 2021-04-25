@@ -10,7 +10,7 @@ import { UserRank } from '../enum/user-rank.enum';
 import { UserType } from '../enum/user-type.enum';
 import { UserEntity } from '../repository/user.entity';
 
-export class UserDto {
+export class UserDetailDto {
     @ApiProperty({ description: 'User ID', example: 1 })
     @IsNumber()
     readonly id: number;
@@ -53,7 +53,7 @@ export class UserDto {
     @IsBoolean()
     readonly email: string;
 
-    static fromModel(model: UserEntity): UserDto {
+    static fromModel(model: UserEntity): UserDetailDto {
         return {
             id: model?.id,
             rank: model?.userRank?.name,
@@ -64,6 +64,6 @@ export class UserDto {
             officeTelNo: model?.officeTelNo,
             firstTimer: model?.firstTimer,
             email: model.email,
-        } as UserDto;
+        } as UserDetailDto;
     }
 }
