@@ -18,7 +18,7 @@ export class LookupController {
         description: 'Success',
         type: [LookupDto],
     })
-    async findAllLookupByCodeList(
+    findAllLookupByCodeList(
         @Query() query: LookupListQueryParamDto,
     ): Promise<LookupListDto> {
         return this.lookupService.findAllByCodeList(query.codeList);
@@ -31,7 +31,7 @@ export class LookupController {
         description: 'Success',
         type: [LookupDto],
     })
-    async findAllLookupByCode(
+    findAllLookupByCode(
         @Query() query: LookupQueryParamDto,
     ): Promise<LookupDto[]> {
         return this.lookupService.findAllByCode(query.code);
