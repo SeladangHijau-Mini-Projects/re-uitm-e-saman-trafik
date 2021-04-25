@@ -1,26 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    IsBoolean,
-    IsEnum,
-    IsNumber,
-    IsNumberString,
-    IsString,
-} from 'class-validator';
-import { UserRank } from '../enum/user-rank.enum';
-import { UserType } from '../enum/user-type.enum';
+import { IsBoolean, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { UserEntity } from '../repository/user.entity';
 
-export class UserDto {
+export class UserSummaryDto {
     @ApiProperty({ description: 'User ID', example: 1 })
     @IsNumber()
     readonly id: number;
 
-    @ApiProperty({ description: 'User rank', enum: UserRank, example: 'ur1' })
-    @IsEnum(UserRank)
+    @ApiProperty({ description: 'User rank', example: 'Jawatan 1' })
+    @IsString()
     readonly rank: string;
 
-    @ApiProperty({ description: 'User type', enum: UserType, example: 'admin' })
-    @IsEnum(UserType)
+    @ApiProperty({ description: 'User type', example: 'Admin' })
+    @IsString()
     readonly type: string;
 
     @ApiProperty({ description: 'User staff code', example: 'K380' })
@@ -53,17 +45,17 @@ export class UserDto {
     @IsBoolean()
     readonly email: string;
 
-    static fromModel(model: UserEntity): UserDto {
+    static fromModel(model: UserEntity): UserSummaryDto {
         return {
             id: model?.id,
-            rank: model?.userRank?.name,
-            type: model?.userType?.name,
+            rank: model?.userRank?.description,
+            type: model?.userType?.description,
             userCode: model?.userCode,
             fullname: model?.fullname,
             phoneTelNo: model?.phoneTelNo,
             officeTelNo: model?.officeTelNo,
             firstTimer: model?.firstTimer,
             email: model.email,
-        } as UserDto;
+        } as UserSummaryDto;
     }
 }
