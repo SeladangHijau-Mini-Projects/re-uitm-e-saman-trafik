@@ -159,20 +159,30 @@ export class ReportController {
         }
 
         // validate status
-        const status = await this.reportService.findStatus(body.status);
+        const status = await this.reportService.findStatus(
+            body?.status ?? report?.reportStatus?.name,
+        );
         if (!status) {
             throw new ResourceNotFoundException('Status was not found.');
         }
 
         // validate user
-        const user = await this.userService.findOne(body.userId);
-        if (body.userId && !user) {
+        const user = await this.userService.findOne(
+            body?.userId ?? report?.userId,
+        );
+        if (!user) {
             throw new ResourceNotFoundException('User ID not found.');
         }
 
         // validate or create student
-        const student = body.studentCode
-            ? await this.studentService.update(body.studentCode, {
+        const student = body?.studentCode
+            ? await this.studentService.updateByStudentCode(body.studentCode, {
+                  fullname: body.studentFullname,
+                  course: body.studentCourse,
+                  college: body.studentCollege,
+              } as UpdateStudentDto)
+            : report?.studentId
+            ? await this.studentService.update(report?.studentId, {
                   fullname: body.studentFullname,
                   course: body.studentCourse,
                   college: body.studentCollege,
@@ -183,15 +193,25 @@ export class ReportController {
         }
 
         // validate or create transport
-        const transport = body.transportPlateNo
-            ? await this.transportService.update(body.transportPlateNo, {
+        const transport = body?.transportPlateNo
+            ? await this.transportService.updateByPlateNo(
+                  body?.transportPlateNo,
+                  {
+                      passCode: body.transportPassCode,
+                      studentId: student?.id,
+                      status: body.transportStatus,
+                      type: body.transportType,
+                  } as UpdateTransportDto,
+              )
+            : report?.transportId
+            ? await this.transportService.update(report?.transportId, {
                   passCode: body.transportPassCode,
                   studentId: student?.id,
                   status: body.transportStatus,
                   type: body.transportType,
               } as UpdateTransportDto)
             : null;
-        if (!transport && body.transportPlateNo) {
+        if (!transport) {
             throw new ResourceNotFoundException('Transport was not found.');
         }
 

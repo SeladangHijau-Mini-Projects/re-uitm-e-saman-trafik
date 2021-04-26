@@ -57,6 +57,45 @@ export class TransportService {
     }
 
     async update(
+        transportId: number,
+        dto: UpdateTransportDto,
+        isAllowCreate: boolean = true,
+    ): Promise<TransportEntity> {
+        // if transport not exist, create new transport
+        const existingTransport = await this.findOne(transportId);
+        if (!existingTransport) {
+            if (isAllowCreate) {
+                return this.create({
+                    plateNo: dto.plateNo,
+                    passCode: dto.passCode,
+                    studentId: dto.studentId,
+                    type: dto.type,
+                    status: dto.status,
+                } as CreateTransportDto);
+            } else {
+                throw new ResourceNotFoundException(
+                    `Transport id (${transportId}) not found.`,
+                );
+            }
+        }
+
+        const type = await this.transportTypeRepository.findOne({
+            name: dto.type,
+        });
+        const status = await this.transportStatusRepository.findOne({
+            name: dto.status,
+        });
+
+        return this.transportRepository.save({
+            id: existingTransport?.id,
+            passCode: dto.passCode ?? existingTransport?.passCode,
+            studentId: dto.studentId ?? existingTransport?.studentId,
+            transportType: type ?? existingTransport?.transportType,
+            transportStatus: status ?? existingTransport?.transportStatus,
+        } as TransportEntity);
+    }
+
+    async updateByPlateNo(
         plateNo: string,
         dto: UpdateTransportDto,
         isAllowCreate: boolean = true,

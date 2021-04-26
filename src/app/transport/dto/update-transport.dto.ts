@@ -13,6 +13,14 @@ export class UpdateTransportDto {
     studentId: number;
 
     @ApiProperty({
+        name: 'Transport plate no',
+        example: 'QWE 123',
+    })
+    @IsString()
+    @IsOptional()
+    plateNo: string;
+
+    @ApiProperty({
         name: 'Transport type',
         enum: TransportType,
         example: TransportType.Car,

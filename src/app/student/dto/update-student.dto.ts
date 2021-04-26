@@ -1,15 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { College } from '../enum/college.enum';
 import { Course } from '../enum/course.enum';
 
 export class UpdateStudentDto {
+    @ApiProperty({
+        description: 'Student code',
+        example: '2015125573',
+    })
+    @IsString()
+    @IsOptional()
+    studentCode: string;
+
     @ApiProperty({
         description: 'Course name',
         enum: Course,
         example: Course.Cs230,
     })
     @IsEnum(Course)
+    @IsOptional()
     course: string;
 
     @ApiProperty({
@@ -18,6 +27,7 @@ export class UpdateStudentDto {
         example: College.Delima,
     })
     @IsEnum(College)
+    @IsOptional()
     college: string;
 
     @ApiProperty({
@@ -25,5 +35,6 @@ export class UpdateStudentDto {
         example: 'Muhammad Nadzmi Bin Mohamed Idzham',
     })
     @IsString()
+    @IsOptional()
     fullname: string;
 }

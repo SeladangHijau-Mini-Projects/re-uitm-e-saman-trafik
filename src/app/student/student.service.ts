@@ -59,6 +59,43 @@ export class StudentService {
     }
 
     async update(
+        studentId: number,
+        dto: UpdateStudentDto,
+        isAllowCreate: boolean = true,
+    ): Promise<StudentEntity> {
+        // if student not exist, create new student
+        const existingStudent = await this.findOne(studentId);
+        if (!existingStudent) {
+            if (isAllowCreate) {
+                return this.create({
+                    studentCode: dto.studentCode,
+                    fullname: dto.fullname,
+                    college: dto.college,
+                    course: dto.course,
+                } as CreateStudentDto);
+            } else {
+                throw new ResourceNotFoundException(
+                    `Student id (${studentId}) not found.`,
+                );
+            }
+        }
+
+        const course = await this.courseRepository.findOne({
+            name: dto.course,
+        });
+        const college = await this.collegeRepository.findOne({
+            name: dto.college,
+        });
+
+        return this.studentRepository.save({
+            id: existingStudent?.id,
+            fullname: dto?.fullname ?? existingStudent?.fullname,
+            studentCourse: course ?? existingStudent?.studentCourse,
+            studentCollege: college ?? existingStudent?.studentCollege,
+        } as StudentEntity);
+    }
+
+    async updateByStudentCode(
         studentCode: string,
         dto: UpdateStudentDto,
         isAllowCreate: boolean = true,
