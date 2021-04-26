@@ -25,6 +25,7 @@ import { AuthGuard } from 'src/common/guard/auth.guard';
 import { ReportSummaryDto } from './dto/report-summary.dto';
 import { ReportDetailDto } from './dto/report-detail.dto';
 import { UpdateStudentDto } from '../student/dto/update-student.dto';
+import { UpdateTransportDto } from '../transport/dto/update-transport.dto';
 
 @ApiTags('Report')
 @UseGuards(AuthGuard)
@@ -177,14 +178,21 @@ export class ReportController {
                   college: body.studentCollege,
               } as UpdateStudentDto)
             : null;
-        if (!student) {
-            throw new ResourceNotFoundException('Student Code not found.');
+        if (!student && body.studentCode) {
+            throw new ResourceNotFoundException('Student not found.');
         }
 
         // validate or create transport
-        const transport = await this.transportService.findOne(body.transportId);
-        if (body.transportId && !transport) {
-            throw new ResourceNotFoundException('Transport ID was not found.');
+        const transport = body.transportPlateNo
+            ? await this.transportService.update(body.transportPlateNo, {
+                  passCode: body.transportPassCode,
+                  studentId: student?.id,
+                  status: body.transportStatus,
+                  type: body.transportType,
+              } as UpdateTransportDto)
+            : null;
+        if (!transport && body.transportPlateNo) {
+            throw new ResourceNotFoundException('Transport was not found.');
         }
 
         // update report

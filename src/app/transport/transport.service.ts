@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { Repository } from 'typeorm';
 import { CreateTransportDto } from './dto/create-transport.dto';
+import { UpdateTransportDto } from './dto/update-transport.dto';
 import { TransportStatusEntity } from './repository/transport-status.entity';
 import { TransportTypeEntity } from './repository/transport-type.entity';
 import { TransportEntity } from './repository/transport.entity';
@@ -51,6 +53,45 @@ export class TransportService {
             studentId: dto.studentId,
             transportType: type,
             transportStatus: status,
+        } as TransportEntity);
+    }
+
+    async update(
+        plateNo: string,
+        dto: UpdateTransportDto,
+        isAllowCreate: boolean = true,
+    ): Promise<TransportEntity> {
+        // if transport not exist, create new transport
+        const existingTransport = await this.findOneByPlateNo(plateNo);
+        if (!existingTransport) {
+            if (isAllowCreate) {
+                return this.create({
+                    plateNo,
+                    passCode: dto.passCode,
+                    studentId: dto.studentId,
+                    type: dto.type,
+                    status: dto.status,
+                } as CreateTransportDto);
+            } else {
+                throw new ResourceNotFoundException(
+                    `Transport plate no (${plateNo}) not found.`,
+                );
+            }
+        }
+
+        const type = await this.transportTypeRepository.findOne({
+            name: dto.type,
+        });
+        const status = await this.transportStatusRepository.findOne({
+            name: dto.status,
+        });
+
+        return this.transportRepository.save({
+            id: existingTransport?.id,
+            passCode: dto.passCode ?? existingTransport?.passCode,
+            studentId: dto.studentId ?? existingTransport?.studentId,
+            transportType: type ?? existingTransport?.transportType,
+            transportStatus: status ?? existingTransport?.transportStatus,
         } as TransportEntity);
     }
 }

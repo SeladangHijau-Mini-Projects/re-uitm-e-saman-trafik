@@ -88,7 +88,7 @@ export class StudentService {
         });
 
         return this.studentRepository.save({
-            id: existingStudent.id,
+            id: existingStudent?.id,
             fullname: dto?.fullname ?? existingStudent?.fullname,
             studentCourse: course ?? existingStudent?.studentCourse,
             studentCollege: college ?? existingStudent?.studentCollege,
