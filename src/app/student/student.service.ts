@@ -63,13 +63,6 @@ export class StudentService {
         dto: UpdateStudentDto,
         isAllowCreate: boolean = true,
     ): Promise<StudentEntity> {
-        const course = await this.courseRepository.findOne({
-            name: dto.course,
-        });
-        const college = await this.collegeRepository.findOne({
-            name: dto.college,
-        });
-
         // if student not exist, create new student
         const existingStudent = await this.findOneByStudentCode(studentCode);
         if (!existingStudent) {
@@ -77,8 +70,8 @@ export class StudentService {
                 return this.create({
                     studentCode,
                     fullname: dto.fullname,
-                    college: college.name,
-                    course: course.name,
+                    college: dto.college,
+                    course: dto.course,
                 } as CreateStudentDto);
             } else {
                 throw new ResourceNotFoundException(
@@ -86,6 +79,13 @@ export class StudentService {
                 );
             }
         }
+
+        const course = await this.courseRepository.findOne({
+            name: dto.course,
+        });
+        const college = await this.collegeRepository.findOne({
+            name: dto.college,
+        });
 
         return this.studentRepository.save({
             id: existingStudent.id,
