@@ -24,6 +24,8 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guard/auth.guard';
 import { ReportSummaryDto } from './dto/report-summary.dto';
 import { ReportDetailDto } from './dto/report-detail.dto';
+import { UpdateStudentDto } from '../student/dto/update-student.dto';
+import { UpdateTransportDto } from '../transport/dto/update-transport.dto';
 
 @ApiTags('Report')
 @UseGuards(AuthGuard)
@@ -157,27 +159,60 @@ export class ReportController {
         }
 
         // validate status
-        const status = await this.reportService.findStatus(body.status);
+        const status = await this.reportService.findStatus(
+            body?.status ?? report?.reportStatus?.name,
+        );
         if (!status) {
             throw new ResourceNotFoundException('Status was not found.');
         }
 
         // validate user
-        const user = await this.userService.findOne(body.userId);
-        if (body.userId && !user) {
+        const user = await this.userService.findOne(
+            body?.userId ?? report?.userId,
+        );
+        if (!user) {
             throw new ResourceNotFoundException('User ID not found.');
         }
 
         // validate or create student
-        const student = await this.studentService.findOne(body.studentId);
-        if (body.studentId && !student) {
-            throw new ResourceNotFoundException('Student ID was not found.');
+        const student = body?.studentCode
+            ? await this.studentService.updateByStudentCode(body.studentCode, {
+                  fullname: body.studentFullname,
+                  course: body.studentCourse,
+                  college: body.studentCollege,
+              } as UpdateStudentDto)
+            : report?.studentId
+            ? await this.studentService.update(report?.studentId, {
+                  fullname: body.studentFullname,
+                  course: body.studentCourse,
+                  college: body.studentCollege,
+              } as UpdateStudentDto)
+            : null;
+        if (!student && body.studentCode) {
+            throw new ResourceNotFoundException('Student not found.');
         }
 
         // validate or create transport
-        const transport = await this.transportService.findOne(body.transportId);
-        if (body.transportId && !transport) {
-            throw new ResourceNotFoundException('Transport ID was not found.');
+        const transport = body?.transportPlateNo
+            ? await this.transportService.updateByPlateNo(
+                  body?.transportPlateNo,
+                  {
+                      passCode: body.transportPassCode,
+                      studentId: student?.id,
+                      status: body.transportStatus,
+                      type: body.transportType,
+                  } as UpdateTransportDto,
+              )
+            : report?.transportId
+            ? await this.transportService.update(report?.transportId, {
+                  passCode: body.transportPassCode,
+                  studentId: student?.id,
+                  status: body.transportStatus,
+                  type: body.transportType,
+              } as UpdateTransportDto)
+            : null;
+        if (!transport) {
+            throw new ResourceNotFoundException('Transport was not found.');
         }
 
         // update report
