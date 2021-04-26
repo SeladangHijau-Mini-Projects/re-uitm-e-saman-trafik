@@ -24,6 +24,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guard/auth.guard';
 import { ReportSummaryDto } from './dto/report-summary.dto';
 import { ReportDetailDto } from './dto/report-detail.dto';
+import { UpdateStudentDto } from '../student/dto/update-student.dto';
 
 @ApiTags('Report')
 @UseGuards(AuthGuard)
@@ -169,9 +170,15 @@ export class ReportController {
         }
 
         // validate or create student
-        const student = await this.studentService.findOne(body.studentId);
-        if (body.studentId && !student) {
-            throw new ResourceNotFoundException('Student ID was not found.');
+        const student = body.studentCode
+            ? await this.studentService.update(body.studentCode, {
+                  fullname: body.studentFullname,
+                  course: body.studentCourse,
+                  college: body.studentCollege,
+              } as UpdateStudentDto)
+            : null;
+        if (!student) {
+            throw new ResourceNotFoundException('Student Code not found.');
         }
 
         // validate or create transport

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 import { CollegeEntity } from './repository/college.entity';
 import { CourseEntity } from './repository/course.entity';
 import { FacultyEntity } from './repository/faculty.entity';
@@ -53,6 +54,36 @@ export class StudentService {
             fullname: dto.fullname,
             studentCourse: course,
             studentCollege: college,
+        } as StudentEntity);
+    }
+
+    async update(
+        studentCode: string,
+        dto: UpdateStudentDto,
+    ): Promise<StudentEntity> {
+        const course = await this.courseRepository.findOne({
+            name: dto.course,
+        });
+        const college = await this.collegeRepository.findOne({
+            name: dto.college,
+        });
+
+        // if student not exist, create new student
+        const existingStudent = await this.findOneByStudentCode(studentCode);
+        if (!existingStudent) {
+            return this.create({
+                studentCode,
+                fullname: dto.fullname,
+                college: college.name,
+                course: course.name,
+            } as CreateStudentDto);
+        }
+
+        return this.studentRepository.save({
+            id: existingStudent.id,
+            fullname: dto?.fullname ?? existingStudent?.fullname,
+            studentCourse: course ?? existingStudent?.studentCourse,
+            studentCollege: college ?? existingStudent?.studentCollege,
         } as StudentEntity);
     }
 }
