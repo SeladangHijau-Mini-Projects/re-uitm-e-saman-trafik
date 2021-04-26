@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -60,6 +61,7 @@ export class StudentService {
     async update(
         studentCode: string,
         dto: UpdateStudentDto,
+        isAllowCreate: boolean = true,
     ): Promise<StudentEntity> {
         const course = await this.courseRepository.findOne({
             name: dto.course,
@@ -71,12 +73,18 @@ export class StudentService {
         // if student not exist, create new student
         const existingStudent = await this.findOneByStudentCode(studentCode);
         if (!existingStudent) {
-            return this.create({
-                studentCode,
-                fullname: dto.fullname,
-                college: college.name,
-                course: course.name,
-            } as CreateStudentDto);
+            if (isAllowCreate) {
+                return this.create({
+                    studentCode,
+                    fullname: dto.fullname,
+                    college: college.name,
+                    course: course.name,
+                } as CreateStudentDto);
+            } else {
+                throw new ResourceNotFoundException(
+                    `Student code (${studentCode}) not found.`,
+                );
+            }
         }
 
         return this.studentRepository.save({
