@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 import { CollegeEntity } from './repository/college.entity';
 import { CourseEntity } from './repository/course.entity';
 import { FacultyEntity } from './repository/faculty.entity';
@@ -53,6 +55,80 @@ export class StudentService {
             fullname: dto.fullname,
             studentCourse: course,
             studentCollege: college,
+        } as StudentEntity);
+    }
+
+    async update(
+        studentId: number,
+        dto: UpdateStudentDto,
+        isAllowCreate: boolean = true,
+    ): Promise<StudentEntity> {
+        // if student not exist, create new student
+        const existingStudent = await this.findOne(studentId);
+        if (!existingStudent) {
+            if (isAllowCreate) {
+                return this.create({
+                    studentCode: dto.studentCode,
+                    fullname: dto.fullname,
+                    college: dto.college,
+                    course: dto.course,
+                } as CreateStudentDto);
+            } else {
+                throw new ResourceNotFoundException(
+                    `Student id (${studentId}) not found.`,
+                );
+            }
+        }
+
+        const course = await this.courseRepository.findOne({
+            name: dto.course,
+        });
+        const college = await this.collegeRepository.findOne({
+            name: dto.college,
+        });
+
+        return this.studentRepository.save({
+            id: existingStudent?.id,
+            fullname: dto?.fullname ?? existingStudent?.fullname,
+            studentCourse: course ?? existingStudent?.studentCourse,
+            studentCollege: college ?? existingStudent?.studentCollege,
+        } as StudentEntity);
+    }
+
+    async updateByStudentCode(
+        studentCode: string,
+        dto: UpdateStudentDto,
+        isAllowCreate: boolean = true,
+    ): Promise<StudentEntity> {
+        // if student not exist, create new student
+        const existingStudent = await this.findOneByStudentCode(studentCode);
+        if (!existingStudent) {
+            if (isAllowCreate) {
+                return this.create({
+                    studentCode,
+                    fullname: dto.fullname,
+                    college: dto.college,
+                    course: dto.course,
+                } as CreateStudentDto);
+            } else {
+                throw new ResourceNotFoundException(
+                    `Student code (${studentCode}) not found.`,
+                );
+            }
+        }
+
+        const course = await this.courseRepository.findOne({
+            name: dto.course,
+        });
+        const college = await this.collegeRepository.findOne({
+            name: dto.college,
+        });
+
+        return this.studentRepository.save({
+            id: existingStudent?.id,
+            fullname: dto?.fullname ?? existingStudent?.fullname,
+            studentCourse: course ?? existingStudent?.studentCourse,
+            studentCollege: college ?? existingStudent?.studentCollege,
         } as StudentEntity);
     }
 }
