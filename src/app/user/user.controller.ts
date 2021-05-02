@@ -36,21 +36,21 @@ export class UserController {
     async findAll(
         @Query() query: QueryParamUserDto,
     ): Promise<UserSummaryDto[] | PaginationBuilder> {
-        let userList = [];
-
         // pagination logic
         if (query?.paginationMeta) {
             const tempLimit = query?.limit;
             const tempPage = query?.page;
+            const userList = await this.userService.findAll(
+                new QueryParamUserDto(),
+            );
 
             query.limit = tempLimit;
             query.page = tempPage;
-            userList = await this.userService.findAll(new QueryParamUserDto());
 
             return PaginationBuilder.build(userList.length, query);
         }
 
-        userList = await this.userService.findAll(query);
+        const userList = await this.userService.findAll(query);
 
         return userList.map(UserSummaryDto.fromModel);
     }

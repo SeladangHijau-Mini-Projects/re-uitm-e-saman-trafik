@@ -51,23 +51,21 @@ export class ReportController {
     async find(
         @Query() query: ReportQueryParamDto,
     ): Promise<ReportSummaryDto[] | PaginationBuilder> {
-        let reportList = [];
-
         // pagination logic
         if (query?.paginationMeta) {
             const tempLimit = query?.limit;
             const tempPage = query?.page;
+            const reportList = await this.reportService.findAll(
+                new ReportQueryParamDto(),
+            );
 
             query.limit = tempLimit;
             query.page = tempPage;
-            reportList = await this.reportService.findAll(
-                new ReportQueryParamDto(),
-            );
 
             return PaginationBuilder.build(reportList.length, query);
         }
 
-        reportList = await this.reportService.findAll(query);
+        const reportList = await this.reportService.findAll(query);
 
         return reportList.map(ReportSummaryDto.fromModel);
     }
