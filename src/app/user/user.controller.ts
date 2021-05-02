@@ -16,6 +16,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserSummaryDto } from './dto/user-summary.dto';
 import { UserDetailDto } from './dto/user-detail.dto';
 import { UserService } from './user.service';
+import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
 
 @ApiTags('User')
 @UseGuards(AuthGuard)
@@ -34,8 +35,22 @@ export class UserController {
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findAll(
         @Query() query: QueryParamUserDto,
-    ): Promise<UserSummaryDto[]> {
-        const userList = await this.userService.findAll(query);
+    ): Promise<UserSummaryDto[] | PaginationBuilder> {
+        let userList = [];
+
+        // pagination logic
+        if (query?.paginationMeta) {
+            const tempLimit = query?.limit;
+            const tempPage = query?.page;
+
+            query.limit = tempLimit;
+            query.page = tempPage;
+            userList = await this.userService.findAll(new QueryParamUserDto());
+
+            return PaginationBuilder.build(userList.length, query);
+        }
+
+        userList = await this.userService.findAll(query);
 
         return userList.map(UserSummaryDto.fromModel);
     }
