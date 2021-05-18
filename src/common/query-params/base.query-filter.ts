@@ -110,4 +110,13 @@ export abstract class BaseQueryFilterBuilder {
     protected getLimit(): number {
         return this.qs?.limit || 30;
     }
+
+    /**
+     * abstract methods
+     */
+    abstract from(value: Date): object;
+
+    abstract to(value: Date): object;
+
+    abstract between(from: Date, to: Date): object;
 }
