@@ -32,6 +32,7 @@ export class TransportService {
         if (!param) {
             return this.transportRepository.find({ withDeleted });
         }
+
         if (param.type) {
             const type = await this.transportTypeRepository.findOne({
                 name: param.type,

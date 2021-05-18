@@ -1,5 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
 import { TransportDetailDto } from './dto/transport-detail.dto';
 import { TransportQueryParamDto } from './dto/transport-query-param.dto';
 import { TransportSummaryDto } from './dto/transport-summary.dto';
@@ -20,7 +21,22 @@ export class TransportController {
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findAll(
         @Query() param: TransportQueryParamDto,
-    ): Promise<TransportSummaryDto[]> {
+    ): Promise<TransportSummaryDto[] | PaginationBuilder> {
+        if (param.paginationMeta) {
+            const tempLimit = param.limit;
+            const tempPage = param.page;
+
+            delete param.limit;
+            delete param.page;
+
+            const result = await this.transportService.findAll(param);
+
+            param.limit = tempLimit;
+            param.page = tempPage;
+
+            return PaginationBuilder.build(result.length, param);
+        }
+
         return (await this.transportService.findAll(param)).map(
             TransportSummaryDto.fromModel,
         );
