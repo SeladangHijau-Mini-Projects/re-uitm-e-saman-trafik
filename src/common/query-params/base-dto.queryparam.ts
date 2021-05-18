@@ -1,43 +1,43 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export abstract class BaseQueryParamDTO {
-    @ApiProperty()
+    @ApiProperty({ required: false })
     @IsNumber()
     @IsOptional()
     id: number;
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
     @IsNumber()
     @IsOptional()
     page: number = 1;
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
     @IsNumber()
     @IsOptional()
     limit: number = 30;
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
     @IsString()
     @IsOptional()
     orderBy: string = '-id';
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
     @IsString()
     @IsOptional()
     fields: string;
 
-    @ApiProperty()
-    @IsString()
+    @ApiProperty({ required: false })
+    @IsDate()
     @IsOptional()
-    from: string;
+    from: Date;
 
-    @ApiProperty()
-    @IsString()
+    @ApiProperty({ required: false })
+    @IsDate()
     @IsOptional()
-    to: string;
+    to: Date;
 
-    @ApiProperty()
+    @ApiProperty({ required: false })
     @IsString()
     @IsOptional()
     paginationMeta: string;

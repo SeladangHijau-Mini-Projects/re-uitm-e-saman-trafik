@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { Repository } from 'typeorm';
 import { CreateTransportDto } from './dto/create-transport.dto';
+import { TransportQueryParamDto } from './dto/transport-query-param.dto';
 import { UpdateTransportDto } from './dto/update-transport.dto';
+import { TransportQueryFilter } from './query-filter/transport.query-filter';
 import { TransportStatusEntity } from './repository/transport-status.entity';
 import { TransportTypeEntity } from './repository/transport-type.entity';
 import { TransportEntity } from './repository/transport.entity';
@@ -22,6 +24,42 @@ export class TransportService {
             TransportStatusEntity
         >,
     ) {}
+
+    async findAll(
+        param: TransportQueryParamDto = null,
+        withDeleted: boolean = false,
+    ): Promise<TransportEntity[]> {
+        if (!param) {
+            return this.transportRepository.find({ withDeleted });
+        }
+
+        if (param.type) {
+            const type = await this.transportTypeRepository.findOne({
+                name: param.type,
+            });
+
+            param = {
+                ...param,
+                typeId: type?.id,
+            } as TransportQueryParamDto;
+        }
+        if (param.status) {
+            const status = await this.transportStatusRepository.findOne({
+                name: param.status,
+            });
+
+            param = {
+                ...param,
+                statusId: status?.id,
+            } as TransportQueryParamDto;
+        }
+
+        const query = new TransportQueryFilter(param).toTypeormQuery();
+        query.relations = ['transportStudent'];
+        query.withDeleted = withDeleted;
+
+        return this.transportRepository.find(query);
+    }
 
     async findOne(transportId: number): Promise<TransportEntity> {
         return this.transportRepository.findOne(transportId);

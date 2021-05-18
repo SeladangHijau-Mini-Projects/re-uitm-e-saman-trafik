@@ -36,6 +36,10 @@ const routes: Routes = [
                 path: '/lookup',
                 module: LookupModule,
             },
+            {
+                path: '/transport',
+                module: TransportModule,
+            },
         ],
     },
 ];

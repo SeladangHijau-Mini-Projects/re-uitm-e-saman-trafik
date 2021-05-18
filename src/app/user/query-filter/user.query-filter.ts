@@ -1,4 +1,5 @@
 import { BaseQueryFilterBuilder } from 'src/common/query-params/base.query-filter';
+import { Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 
 export class UserQueryFilter extends BaseQueryFilterBuilder {
     rankId(value: number): object {
@@ -40,6 +41,24 @@ export class UserQueryFilter extends BaseQueryFilterBuilder {
     firstTimer(value: string): object {
         return {
             firstTimer: value ? value.toLowerCase() == 'true' : null,
+        };
+    }
+
+    from(value: Date): object {
+        return {
+            createdAt: MoreThanOrEqual(value),
+        };
+    }
+
+    to(value: Date): object {
+        return {
+            createdAt: LessThanOrEqual(value),
+        };
+    }
+
+    between(from: Date, to: Date): object {
+        return {
+            createdAt: Between(from, to),
         };
     }
 }
