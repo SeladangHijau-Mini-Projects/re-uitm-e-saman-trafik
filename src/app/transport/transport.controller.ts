@@ -1,11 +1,21 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+    Controller,
+    Get,
+    Param,
+    ParseIntPipe,
+    Query,
+    UseGuards,
+} from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/common/guard/auth.guard';
 import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
 import { TransportDetailDto } from './dto/transport-detail.dto';
 import { TransportQueryParamDto } from './dto/transport-query-param.dto';
 import { TransportSummaryDto } from './dto/transport-summary.dto';
 import { TransportService } from './transport.service';
 
+@ApiTags('Transport')
+@UseGuards(AuthGuard)
 @Controller()
 export class TransportController {
     constructor(private readonly transportService: TransportService) {}
