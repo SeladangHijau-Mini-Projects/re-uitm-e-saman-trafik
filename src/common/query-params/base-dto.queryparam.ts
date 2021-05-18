@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export abstract class BaseQueryParamDTO {
     @ApiProperty()
@@ -28,14 +28,14 @@ export abstract class BaseQueryParamDTO {
     fields: string;
 
     @ApiProperty()
-    @IsString()
+    @IsDate()
     @IsOptional()
-    from: string;
+    from: Date;
 
     @ApiProperty()
-    @IsString()
+    @IsDate()
     @IsOptional()
-    to: string;
+    to: Date;
 
     @ApiProperty()
     @IsString()
