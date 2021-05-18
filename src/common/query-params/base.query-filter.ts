@@ -48,6 +48,21 @@ export abstract class BaseQueryFilterBuilder {
      */
     protected getWhere(): object {
         const conditions = {};
+
+        // from & to query filter logic
+        if (
+            Object.keys(this.qs || {}).includes('from') &&
+            Object.keys(this.qs || {}).includes('to')
+        ) {
+            Object.assign(
+                conditions,
+                this['between'](this.qs['from'], this.qs['to']),
+            );
+
+            delete this.qs['from'];
+            delete this.qs['to'];
+        }
+
         Object.keys(this.qs || {}).forEach((key: string | number) => {
             if (this[key]) {
                 Object.assign(conditions, this[key](this.qs[key]));
