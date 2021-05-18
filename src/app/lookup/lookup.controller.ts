@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
 import { LookupListQueryParamDto } from './dto/lookup-list-query-param.dto';
 import { LookupListDto } from './dto/lookup-list.dto';
 import { LookupQueryParamDto } from './dto/lookup-query-param.dto';
@@ -33,7 +34,21 @@ export class LookupController {
     })
     async findAllLookupByCode(
         @Query() query: LookupQueryParamDto,
-    ): Promise<LookupDto[]> {
+    ): Promise<LookupDto[] | PaginationBuilder> {
+        // pagination logic
+        if (query?.paginationMeta) {
+            const tempLimit = query?.limit;
+            const tempPage = query?.page;
+            const lookupList = await this.lookupService.findAllByCode(
+                query.code,
+            );
+
+            query.limit = tempLimit;
+            query.page = tempPage;
+
+            return PaginationBuilder.build(lookupList.length, query);
+        }
+
         return this.lookupService.findAllByCode(query.code);
     }
 }
