@@ -48,6 +48,13 @@ export class ReportDetailDto {
     remark: string;
 
     @ApiProperty({
+        description: 'Transport ID',
+        example: 1,
+    })
+    @IsNumber()
+    transportId: number;
+
+    @ApiProperty({
         description: 'Transport status key',
         example: TransportStatus.Locked,
         enum: TransportStatus,
@@ -76,6 +83,13 @@ export class ReportDetailDto {
     })
     @IsString()
     transportPassCode: string;
+
+    @ApiProperty({
+        description: 'Student ID',
+        example: 1,
+    })
+    @IsNumber()
+    studentId: number;
 
     @ApiProperty({
         description: 'Student code',
@@ -134,10 +148,12 @@ export class ReportDetailDto {
                     ? model?.reportHistories[model?.reportHistories.length - 1]
                           ?.remark
                     : null,
+            transportId: model?.reportTransport?.id,
             transportStatus: model?.reportTransport?.transportStatus?.name,
             transportType: model?.reportTransport?.transportType?.name,
             transportPlateNo: model?.reportTransport?.plateNo,
             transportPassCode: model?.reportTransport?.passCode,
+            studentId: model?.reportStudent?.id,
             studentCode: model?.reportStudent?.studentCode,
             studentFullname: model?.reportStudent?.fullname,
             studentCourse: model?.reportStudent?.studentCourse?.name,

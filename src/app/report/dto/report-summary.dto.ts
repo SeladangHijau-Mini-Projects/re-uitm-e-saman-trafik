@@ -40,6 +40,13 @@ export class ReportSummaryDto {
     remark: string;
 
     @ApiProperty({
+        description: 'Transport ID',
+        example: 1,
+    })
+    @IsNumber()
+    transportId: number;
+
+    @ApiProperty({
         description: 'Transport status value',
         example: 'Locked',
     })
@@ -66,6 +73,13 @@ export class ReportSummaryDto {
     })
     @IsString()
     transportPassCode: string;
+
+    @ApiProperty({
+        description: 'Student ID',
+        example: 1,
+    })
+    @IsNumber()
+    studentId: number;
 
     @ApiProperty({
         description: 'Student code',
@@ -121,11 +135,13 @@ export class ReportSummaryDto {
                     ? model?.reportHistories[model?.reportHistories.length - 1]
                           ?.remark
                     : null,
+            transportId: model?.reportTransport?.id,
             transportStatus:
                 model?.reportTransport?.transportStatus?.description,
             transportType: model?.reportTransport?.transportType?.description,
             transportPlateNo: model?.reportTransport?.plateNo,
             transportPassCode: model?.reportTransport?.passCode,
+            studentId: model?.reportStudent?.id,
             studentCode: model?.reportStudent?.studentCode,
             studentFullname: model?.reportStudent?.fullname,
             studentCourse: model?.reportStudent?.studentCourse?.description,
