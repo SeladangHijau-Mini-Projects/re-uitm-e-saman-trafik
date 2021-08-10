@@ -10,7 +10,6 @@ import { TrafficErrorService } from '../traffic-error/traffic-error.service';
 import { TransportStatusEntity } from '../transport/repository/transport-status.entity';
 import { TransportTypeEntity } from '../transport/repository/transport-type.entity';
 import { TransportService } from '../transport/transport.service';
-import { UserRankEntity } from '../user/repository/user-rank.entity';
 import { UserTypeEntity } from '../user/repository/user-type.entity';
 import { UserService } from '../user/user.service';
 import { LookupListDto } from './dto/lookup-list.dto';
@@ -67,20 +66,12 @@ export class Lookupservice {
                             value: faculty.name,
                         } as LookupDto),
                 );
-            case LookupCode.UserRank:
-                return (await this.userService.findAllRank()).map(
-                    (rank: UserRankEntity) =>
-                        ({
-                            label: rank.description,
-                            value: rank.name,
-                        } as LookupDto),
-                );
             case LookupCode.UserType:
                 return (await this.userService.findAllType()).map(
                     (type: UserTypeEntity) =>
                         ({
                             label: type.description,
-                            value: type.name,
+                            value: type.code,
                         } as LookupDto),
                 );
             case LookupCode.TransportStatus:

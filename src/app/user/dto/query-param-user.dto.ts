@@ -8,25 +8,9 @@ import {
     IsString,
 } from 'class-validator';
 import { BaseQueryParamDTO } from 'src/common/query-params/base-dto.queryparam';
-import { UserRank } from '../enum/user-rank.enum';
 import { UserType } from '../enum/user-type.enum';
 
 export class QueryParamUserDto extends BaseQueryParamDTO {
-    @ApiProperty({
-        required: false,
-        description: 'User rank',
-        enum: UserRank,
-        example: 'ur1',
-    })
-    @IsEnum(UserRank)
-    @IsOptional()
-    readonly rank: string;
-
-    @ApiProperty({ required: false, description: 'User rank ID', example: 1 })
-    @IsNumber()
-    @IsOptional()
-    readonly rankId: number;
-
     @ApiProperty({
         required: false,
         description: 'User type',
@@ -49,7 +33,7 @@ export class QueryParamUserDto extends BaseQueryParamDTO {
     })
     @IsString()
     @IsOptional()
-    readonly userCode: string;
+    readonly code: string;
 
     @ApiProperty({
         required: false,
@@ -58,7 +42,7 @@ export class QueryParamUserDto extends BaseQueryParamDTO {
     })
     @IsString()
     @IsOptional()
-    readonly fullname: string;
+    readonly name: string;
 
     @ApiProperty({
         required: false,
@@ -67,7 +51,7 @@ export class QueryParamUserDto extends BaseQueryParamDTO {
     })
     @IsNumberString()
     @IsOptional()
-    readonly phoneTelNo: string;
+    readonly mobileTelNo: string;
 
     @ApiProperty({
         required: false,

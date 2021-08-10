@@ -62,7 +62,7 @@ export class ReportService {
             } as ReportQueryParamDto;
         }
         if (dto.userCode) {
-            const user = await this.userService.findOneByUserCode(dto.userCode);
+            const user = await this.userService.findOneByCode(dto.userCode);
 
             dto = {
                 ...dto,

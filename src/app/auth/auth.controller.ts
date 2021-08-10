@@ -41,23 +41,23 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async login(@Body() body: LoginDto): Promise<LoggedInDto> {
-        const user = await this.userService.findOneByUserCode(body.username);
+        const user = await this.userService.findOneByCode(body.username);
         if (!user) {
             throw new ResourceNotFoundException('User not found.');
         }
 
-        const auth = await this.authService.findOneByUserId(user.id);
+        const auth = await this.authService.findOneByUserId(user?.id);
         if (auth?.password != body.password) {
             throw new UnauthorizedException('Unauthorized user.');
         }
 
         const userToken = this.authService.generateJwtToken(
-            user.id,
-            user.userType.name,
+            user?.id,
+            user?.userType?.code,
         );
 
         return {
-            userId: user.id,
+            userId: user?.id,
             userToken,
         } as LoggedInDto;
     }
@@ -72,34 +72,34 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async register(@Body() body: CreateUserDto): Promise<RegisteredDto> {
-        const existingUser = await this.userService.findOneByUserCode(
-            body.userCode,
-        );
+        const existingUser = await this.userService.findOneByCode(body?.code);
 
         if (existingUser) {
-            throw new ExistsException(`User code '${body.userCode}' exist.`);
+            throw new ExistsException(`User code '${body?.code}' exist.`);
         }
 
         const newUser = await this.userService.create(body);
         const newAuth = await this.authService.generateAuth(
             newUser?.id,
-            newUser?.userType?.name,
+            newUser?.userType?.code,
         );
-        const resetPasswordUrl = `${this.configService.get<string>(
-            'APP_RESET_PASSWORD_URL',
-        )}?token=${newAuth.resetToken}`;
-
-        // send registration email
-        await this.mailService.sendRegistrationEmail(
-            newUser.email,
-            resetPasswordUrl,
+        const userToken = this.authService.generateJwtToken(
+            newUser?.id,
+            newUser?.userType?.code,
         );
 
-        return {
-            id: newUser.id,
-            username: newUser.userCode,
-            resetPasswordUrl,
-        } as RegisteredDto;
+        // TODO: remove this logic for now
+        // const resetPasswordUrl = `${this.configService.get<string>(
+        //     'APP_RESET_PASSWORD_URL',
+        // )}?token=${newAuth.resetToken}`;
+
+        // // send registration email
+        // await this.mailService.sendRegistrationEmail(
+        //     newUser?.email,
+        //     resetPasswordUrl,
+        // );
+
+        return RegisteredDto.fromModel(newUser, newAuth, userToken);
     }
 
     @Get(':userCode/reset-password')
@@ -114,7 +114,7 @@ export class AuthController {
     async requestForgotPassword(
         @Param('userCode') userCode: string,
     ): Promise<RequestPasswordResetDto> {
-        const user = await this.userService.findOneByUserCode(userCode);
+        const user = await this.userService.findOneByCode(userCode);
         if (!user) {
             throw new ResourceNotFoundException(
                 `User Code '${userCode}' was not found.`,
@@ -122,21 +122,21 @@ export class AuthController {
         }
 
         const newAuth = await this.authService.generateAuth(
-            user.id,
-            user.userType.name,
+            user?.id,
+            user?.userType?.code,
         );
         const resetPasswordUrl = `${this.configService.get<string>(
             'APP_RESET_PASSWORD_URL',
-        )}?token=${newAuth.resetToken}`;
+        )}?token=${newAuth?.resetToken}`;
 
         // send registration email
         await this.mailService.sendForgotPasswordEmail(
-            user.email,
+            user?.email,
             resetPasswordUrl,
         );
 
         return {
-            resetToken: newAuth.resetToken,
+            resetToken: newAuth?.resetToken,
             resetPasswordUrl,
         } as RequestPasswordResetDto;
     }
@@ -171,8 +171,8 @@ export class AuthController {
         await this.authService.resetPassword(curAuth.id, body.password);
 
         const userToken = this.authService.generateJwtToken(
-            user.id,
-            user.userType.name,
+            user?.id,
+            user?.userType?.code,
         );
 
         return {
