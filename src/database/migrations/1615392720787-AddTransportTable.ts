@@ -19,26 +19,17 @@ export class AddTransportTable1615392720787 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'student_id',
-                        type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'type_id',
-                        type: 'int',
-                    },
-                    {
                         name: 'status_id',
                         type: 'int',
                     },
                     {
-                        name: 'plate_no',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'pass_code',
+                        name: 'code',
                         type: 'varchar',
                         isNullable: true,
+                    },
+                    {
+                        name: 'plate_no',
+                        type: 'varchar',
                     },
                     {
                         name: 'created_at',
@@ -56,22 +47,6 @@ export class AddTransportTable1615392720787 implements MigrationInterface {
             true,
         );
 
-        await queryRunner.createForeignKey(
-            'transports',
-            new TableForeignKey({
-                columnNames: ['student_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'students',
-            }),
-        );
-        await queryRunner.createForeignKey(
-            'transports',
-            new TableForeignKey({
-                columnNames: ['type_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'transport_types',
-            }),
-        );
         await queryRunner.createForeignKey(
             'transports',
             new TableForeignKey({

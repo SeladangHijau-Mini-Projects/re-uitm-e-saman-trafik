@@ -5,11 +5,11 @@ import {
     TableForeignKey,
 } from 'typeorm';
 
-export class AddReportTable1615393070973 implements MigrationInterface {
+export class AddNotificationTable1617900035592 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'reports',
+                name: 'notifications',
                 columns: [
                     {
                         name: 'id',
@@ -23,19 +23,15 @@ export class AddReportTable1615393070973 implements MigrationInterface {
                         type: 'int',
                     },
                     {
-                        name: 'transport_id',
+                        name: 'report_id',
                         type: 'int',
                     },
                     {
-                        name: 'student_id',
-                        type: 'int',
+                        name: 'content',
+                        type: 'varchar',
                     },
                     {
-                        name: 'user_id',
-                        type: 'int',
-                    },
-                    {
-                        name: 'location',
+                        name: 'reference',
                         type: 'varchar',
                     },
                     {
@@ -55,40 +51,24 @@ export class AddReportTable1615393070973 implements MigrationInterface {
         );
 
         await queryRunner.createForeignKey(
-            'reports',
+            'notifications',
             new TableForeignKey({
                 columnNames: ['status_id'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'report_statuses',
+                referencedTableName: 'notification_statuses',
             }),
         );
         await queryRunner.createForeignKey(
-            'reports',
+            'notifications',
             new TableForeignKey({
-                columnNames: ['transport_id'],
+                columnNames: ['report_id'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'transports',
-            }),
-        );
-        await queryRunner.createForeignKey(
-            'reports',
-            new TableForeignKey({
-                columnNames: ['student_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'students',
-            }),
-        );
-        await queryRunner.createForeignKey(
-            'reports',
-            new TableForeignKey({
-                columnNames: ['user_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'users',
+                referencedTableName: 'reports',
             }),
         );
     }
 
     async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('reports');
+        await queryRunner.dropTable('notifications');
     }
 }

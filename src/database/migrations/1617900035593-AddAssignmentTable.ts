@@ -1,10 +1,15 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import {
+    MigrationInterface,
+    QueryRunner,
+    Table,
+    TableForeignKey,
+} from 'typeorm';
 
-export class AddUserTypeTable1615390701465 implements MigrationInterface {
+export class AddAssignmentTable1617900035593 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'user_types',
+                name: 'assignments',
                 columns: [
                     {
                         name: 'id',
@@ -14,13 +19,12 @@ export class AddUserTypeTable1615390701465 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'code',
-                        type: 'varchar',
+                        name: 'report_id',
+                        type: 'int',
                     },
                     {
-                        name: 'description',
-                        type: 'varchar',
-                        isNullable: true,
+                        name: 'user_id',
+                        type: 'int',
                     },
                     {
                         name: 'created_at',
@@ -37,9 +41,26 @@ export class AddUserTypeTable1615390701465 implements MigrationInterface {
             }),
             true,
         );
+
+        await queryRunner.createForeignKey(
+            'assignments',
+            new TableForeignKey({
+                columnNames: ['report_id'],
+                referencedColumnNames: ['id'],
+                referencedTableName: 'reports',
+            }),
+        );
+        await queryRunner.createForeignKey(
+            'assignments',
+            new TableForeignKey({
+                columnNames: ['user_id'],
+                referencedColumnNames: ['id'],
+                referencedTableName: 'users',
+            }),
+        );
     }
 
     async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('user_types');
+        await queryRunner.dropTable('assignments');
     }
 }

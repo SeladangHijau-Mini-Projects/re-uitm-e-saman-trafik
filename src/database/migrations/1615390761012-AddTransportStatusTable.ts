@@ -15,7 +15,7 @@ export class AddTransportStatusTable1615390761012
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'name',
+                        name: 'code',
                         type: 'varchar',
                     },
                     {

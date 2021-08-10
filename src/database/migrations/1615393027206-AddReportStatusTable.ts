@@ -14,7 +14,7 @@ export class AddReportStatusTable1615393027206 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'name',
+                        name: 'code',
                         type: 'varchar',
                     },
                     {
