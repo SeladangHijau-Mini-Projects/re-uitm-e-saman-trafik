@@ -31,6 +31,13 @@ export class AuthService {
         return this.authRepository.findOne({ resetToken });
     }
 
+    async findByUserIdAndResetToken(
+        userId: number,
+        resetToken: string,
+    ): Promise<AuthEntity> {
+        return this.authRepository.findOne({ userId, resetToken });
+    }
+
     async generateAuth(userId: number, userType: string): Promise<AuthEntity> {
         let auth = await this.authRepository.findOne({ userId });
 
