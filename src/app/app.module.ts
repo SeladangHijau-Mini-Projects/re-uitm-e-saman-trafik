@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { RouterModule, Routes } from 'nest-router';
 import { DatabaseModule } from '../database/database.module';
 import { HealthModule } from './health/health.module';
 import { UserModule } from './user/user.module';
@@ -11,42 +10,11 @@ import { TransportModule } from './transport/transport.module';
 import { TrafficErrorModule } from './traffic-error/traffic-error.module';
 import { MailModule } from './mail/mail.module';
 import { LookupModule } from './lookup/lookup.module';
-
-const routes: Routes = [
-    {
-        path: '/v1',
-        children: [
-            {
-                path: '/health',
-                module: HealthModule,
-            },
-            {
-                path: '/auth',
-                module: AuthModule,
-            },
-            {
-                path: '/user',
-                module: UserModule,
-            },
-            {
-                path: '/report',
-                module: ReportModule,
-            },
-            {
-                path: '/lookup',
-                module: LookupModule,
-            },
-            {
-                path: '/transport',
-                module: TransportModule,
-            },
-        ],
-    },
-];
+import { RouterModule } from './router.module';
 
 @Module({
     imports: [
-        RouterModule.forRoutes(routes),
+        RouterModule,
         ConfigModule.forRoot({ isGlobal: true }),
         DatabaseModule,
         HealthModule,
