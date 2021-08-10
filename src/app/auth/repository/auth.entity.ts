@@ -36,5 +36,5 @@ export class AuthEntity {
 
     @OneToOne(() => UserEntity, { eager: true })
     @JoinColumn({ name: 'user_id' })
-    authUser: UserEntity;
+    user: UserEntity;
 }
