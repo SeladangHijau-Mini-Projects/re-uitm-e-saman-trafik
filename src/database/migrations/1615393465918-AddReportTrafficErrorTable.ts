@@ -29,11 +29,6 @@ export class AddReportTrafficErrorTable1615393465918
                         isNullable: true,
                     },
                     {
-                        name: 'other_value',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
                         name: 'created_at',
                         type: 'timestamp',
                         default: 'CURRENT_TIMESTAMP',

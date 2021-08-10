@@ -6,7 +6,6 @@ import {
     IsNumberString,
     IsString,
 } from 'class-validator';
-import { UserRank } from '../enum/user-rank.enum';
 import { UserType } from '../enum/user-type.enum';
 import { UserEntity } from '../repository/user.entity';
 
@@ -15,25 +14,21 @@ export class UserDetailDto {
     @IsNumber()
     readonly id: number;
 
-    @ApiProperty({ description: 'User rank', enum: UserRank, example: 'ur1' })
-    @IsEnum(UserRank)
-    readonly rank: string;
-
     @ApiProperty({ description: 'User type', enum: UserType, example: 'admin' })
     @IsEnum(UserType)
     readonly type: string;
 
     @ApiProperty({ description: 'User staff code', example: 'K380' })
     @IsString()
-    readonly userCode: string;
+    readonly code: string;
 
     @ApiProperty({ description: 'User full name', example: 'John Doe' })
     @IsString()
-    readonly fullname: string;
+    readonly name: string;
 
-    @ApiProperty({ description: 'User phone tel no', example: '0111234567' })
+    @ApiProperty({ description: 'User mobile tel no', example: '0111234567' })
     @IsNumberString()
-    readonly phoneTelNo: string;
+    readonly mobileTelNo: string;
 
     @ApiProperty({ description: 'User office tel no', example: '044911234' })
     @IsNumberString()
@@ -56,11 +51,10 @@ export class UserDetailDto {
     static fromModel(model: UserEntity): UserDetailDto {
         return {
             id: model?.id,
-            rank: model?.userRank?.name,
-            type: model?.userType?.name,
-            userCode: model?.userCode,
-            fullname: model?.fullname,
-            phoneTelNo: model?.phoneTelNo,
+            type: model?.userType?.code,
+            code: model?.code,
+            name: model?.name,
+            mobileTelNo: model?.mobileTelNo,
             officeTelNo: model?.officeTelNo,
             firstTimer: model?.firstTimer,
             email: model.email,

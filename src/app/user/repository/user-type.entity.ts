@@ -7,9 +7,9 @@ export class UserTypeEntity {
     @Expose()
     id: number;
 
-    @Column({ name: 'name' })
+    @Column({ name: 'code' })
     @Expose()
-    name: string;
+    code: string;
 
     @Column({ name: 'description' })
     @Expose()

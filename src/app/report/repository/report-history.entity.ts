@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
 import { TransportEntity } from 'src/app/transport/repository/transport.entity';
-import { UserEntity } from 'src/app/user/repository/user.entity';
 import {
     Column,
     Entity,
@@ -64,11 +63,4 @@ export class ReportHistoryEntity {
     )
     @JoinColumn({ name: 'report_id' })
     reportHistoryReport: ReportEntity;
-
-    @ManyToOne(
-        () => UserEntity,
-        (user: UserEntity) => user.reportHistories,
-    )
-    @JoinColumn({ name: 'id' })
-    reportHistoryUser: UserEntity;
 }

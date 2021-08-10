@@ -1,10 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class AddUserTypeTable1615390701465 implements MigrationInterface {
+export class AddNotificationStatusTable1617900035591
+    implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'user_types',
+                name: 'notification_statuses',
                 columns: [
                     {
                         name: 'id',
@@ -20,7 +21,6 @@ export class AddUserTypeTable1615390701465 implements MigrationInterface {
                     {
                         name: 'description',
                         type: 'varchar',
-                        isNullable: true,
                     },
                     {
                         name: 'created_at',
@@ -40,6 +40,6 @@ export class AddUserTypeTable1615390701465 implements MigrationInterface {
     }
 
     async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('user_types');
+        await queryRunner.dropTable('notification_statuses');
     }
 }

@@ -5,11 +5,11 @@ import {
     TableForeignKey,
 } from 'typeorm';
 
-export class AddUserTable1615391391781 implements MigrationInterface {
+export class AddNotificationTable1617900035592 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'users',
+                name: 'notifications',
                 columns: [
                     {
                         name: 'id',
@@ -19,34 +19,20 @@ export class AddUserTable1615391391781 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'type_id',
+                        name: 'status_id',
                         type: 'int',
                     },
                     {
-                        name: 'code',
+                        name: 'report_id',
+                        type: 'int',
+                    },
+                    {
+                        name: 'content',
                         type: 'varchar',
                     },
                     {
-                        name: 'name',
+                        name: 'reference',
                         type: 'varchar',
-                    },
-                    {
-                        name: 'mobile_tel_no',
-                        type: 'varchar',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'office_tel_no',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'email',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'first_timer',
-                        type: 'tinyint',
-                        default: 1,
                     },
                     {
                         name: 'created_at',
@@ -65,16 +51,24 @@ export class AddUserTable1615391391781 implements MigrationInterface {
         );
 
         await queryRunner.createForeignKey(
-            'users',
+            'notifications',
             new TableForeignKey({
-                columnNames: ['type_id'],
+                columnNames: ['status_id'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'user_types',
+                referencedTableName: 'notification_statuses',
+            }),
+        );
+        await queryRunner.createForeignKey(
+            'notifications',
+            new TableForeignKey({
+                columnNames: ['report_id'],
+                referencedColumnNames: ['id'],
+                referencedTableName: 'reports',
             }),
         );
     }
 
     async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('users');
+        await queryRunner.dropTable('notifications');
     }
 }

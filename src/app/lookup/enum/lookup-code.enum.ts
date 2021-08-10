@@ -8,5 +8,4 @@ export enum LookupCode {
     TrafficError = 'traffic-error',
     ReportStatus = 'report-status',
     UserType = 'user-type',
-    UserRank = 'user-rank',
 }
