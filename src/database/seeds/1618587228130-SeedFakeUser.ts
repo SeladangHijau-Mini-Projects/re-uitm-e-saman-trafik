@@ -6,7 +6,7 @@ export class SeedFakeUser1618587228130 implements MigrationInterface {
         await queryRunner.query(
             `
                 INSERT INTO users(
-                    type_id, user_code,
+                    type_id, code,
                     name, mobile_tel_no, office_tel_no,
                     first_timer, email
                 ) 
@@ -20,7 +20,7 @@ export class SeedFakeUser1618587228130 implements MigrationInterface {
         await queryRunner.query(
             `
                 INSERT INTO users(
-                    type_id, user_code,
+                    type_id, code,
                     name, mobile_tel_no, office_tel_no,
                     first_timer, email
                 ) 
@@ -34,7 +34,7 @@ export class SeedFakeUser1618587228130 implements MigrationInterface {
         await queryRunner.query(
             `
                 INSERT INTO users(
-                    type_id, user_code,
+                    type_id, code,
                     name, mobile_tel_no, office_tel_no,
                     first_timer, email
                 ) 

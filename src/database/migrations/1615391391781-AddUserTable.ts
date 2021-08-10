@@ -23,7 +23,7 @@ export class AddUserTable1615391391781 implements MigrationInterface {
                         type: 'int',
                     },
                     {
-                        name: 'user_code',
+                        name: 'code',
                         type: 'varchar',
                     },
                     {
