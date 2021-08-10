@@ -138,7 +138,7 @@ export class AuthController {
         } as RequestPasswordResetDto;
     }
 
-    @Post('reset-password/:resetToken')
+    @Post(':userId/reset-password')
     @ApiOperation({ summary: 'Set new password.' })
     @ApiResponse({
         status: 200,
@@ -147,8 +147,8 @@ export class AuthController {
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-    async forgotPassword(
-        @Param('resetToken') resetToken: string,
+    async resetPassword(
+        @Param('userId') userId: number,
         @Body() body: PasswordResetDto,
     ): Promise<LoggedInDto> {
         if (body.password != body.confirmPassword) {
@@ -157,23 +157,30 @@ export class AuthController {
             );
         }
 
-        const auth = await this.authService.findByResetToken(resetToken);
-        if (!auth) {
-            throw new ResourceNotFoundException('Reset token not found.');
+        const user = await this.userService.findOne(userId);
+        if (!user) {
+            throw new ResourceNotFoundException(
+                `User id = ${userId} was not found`,
+            );
         }
 
-        const curAuth = await this.authService.findByResetToken(resetToken);
-        const user = await this.userService.findOne(curAuth.userId);
+        const auth = await this.authService.findByUserIdAndResetToken(
+            userId,
+            body?.resetToken,
+        );
+        if (!auth) {
+            throw new ResourceNotFoundException(
+                `Reset token not found for user id = ${userId}.`,
+            );
+        }
 
-        await this.authService.resetPassword(curAuth.id, body.password);
+        await this.authService.resetPassword(auth?.id, body?.password);
 
         const userToken = this.authService.generateJwtToken(
             user?.id,
             user?.userType?.code,
         );
 
-        return {
-            userToken,
-        } as LoggedInDto;
+        return LoggedInDto.fromModel(user, userToken);
     }
 }
