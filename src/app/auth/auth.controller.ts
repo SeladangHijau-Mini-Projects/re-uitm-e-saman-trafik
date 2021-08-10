@@ -41,7 +41,7 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async login(@Body() body: LoginDto): Promise<LoggedInDto> {
-        const user = await this.userService.findOneByCode(body.username);
+        const user = await this.userService.findOneByCode(body?.username);
         if (!user) {
             throw new ResourceNotFoundException('User not found.');
         }
@@ -56,10 +56,7 @@ export class AuthController {
             user?.userType?.code,
         );
 
-        return {
-            userId: user?.id,
-            userToken,
-        } as LoggedInDto;
+        return LoggedInDto.fromModel(user, userToken);
     }
 
     @Post('register')
