@@ -84,16 +84,15 @@ export class AuthController {
             newUser?.userType?.code,
         );
 
-        // TODO: remove this logic for now
-        // const resetPasswordUrl = `${this.configService.get<string>(
-        //     'APP_RESET_PASSWORD_URL',
-        // )}?token=${newAuth.resetToken}`;
+        // send registration email
+        const resetPasswordUrl = `${this.configService.get<string>('HOST')}/${
+            newUser?.id
+        }/reset-password?token=${newAuth.resetToken}`;
 
-        // // send registration email
-        // await this.mailService.sendRegistrationEmail(
-        //     newUser?.email,
-        //     resetPasswordUrl,
-        // );
+        await this.notificationService.sendRegistrationEmail(
+            newUser?.email,
+            resetPasswordUrl,
+        );
 
         return RegisteredDto.fromModel(newUser, newAuth, userToken);
     }
@@ -122,16 +121,15 @@ export class AuthController {
             user?.userType?.code,
         );
 
-        // TODO: remove this logic for now
-        // const resetPasswordUrl = `${this.configService.get<string>(
-        //     'APP_RESET_PASSWORD_URL',
-        // )}?token=${newAuth?.resetToken}`;
+        // send forgot password email
+        const resetPasswordUrl = `${this.configService.get<string>('HOST')}/${
+            user?.id
+        }/reset-password?token=${newAuth.resetToken}`;
 
-        // // send registration email
-        // await this.mailService.sendForgotPasswordEmail(
-        //     user?.email,
-        //     resetPasswordUrl,
-        // );
+        await this.notificationService.sendForgotPasswordEmail(
+            user?.email,
+            resetPasswordUrl,
+        );
 
         return RequestResetPasswordDto.fromModel(user, newAuth);
     }
