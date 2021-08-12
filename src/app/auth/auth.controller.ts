@@ -10,7 +10,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExistsException } from 'src/common/exception/exists.exception';
 import { InvalidValueException } from 'src/common/exception/invalid-value.exception';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
-import { MailService } from '../mail/mail.service';
+import { NotificationService } from '../notification/notification.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
@@ -26,7 +26,7 @@ export class AuthController {
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
-        private readonly mailService: MailService,
+        private readonly notificationService: NotificationService,
         private readonly configService: ConfigService,
     ) {}
 

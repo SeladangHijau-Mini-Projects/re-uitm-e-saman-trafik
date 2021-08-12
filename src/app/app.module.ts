@@ -8,9 +8,9 @@ import { ReportModule } from './report/report.module';
 import { StudentModule } from './student/student.module';
 import { TransportModule } from './transport/transport.module';
 import { TrafficErrorModule } from './traffic-error/traffic-error.module';
-import { MailModule } from './mail/mail.module';
 import { LookupModule } from './lookup/lookup.module';
 import { RouterModule } from './router.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
     imports: [
@@ -24,7 +24,7 @@ import { RouterModule } from './router.module';
         StudentModule,
         TransportModule,
         TrafficErrorModule,
-        MailModule,
+        NotificationModule,
         LookupModule,
     ],
 })

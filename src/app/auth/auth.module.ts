@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MailModule } from '../mail/mail.module';
+import { NotificationModule } from '../notification/notification.module';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -11,7 +11,7 @@ import { AuthEntity } from './repository/auth.entity';
     imports: [
         TypeOrmModule.forFeature([AuthEntity]),
         UserModule,
-        MailModule,
+        NotificationModule,
         ConfigModule,
     ],
     controllers: [AuthController],
