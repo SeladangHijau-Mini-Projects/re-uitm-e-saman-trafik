@@ -1,22 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-    IsBoolean,
-    IsEnum,
-    IsNumber,
-    IsNumberString,
-    IsString,
-} from 'class-validator';
-import { UserType } from '../enum/user-type.enum';
+import { IsBoolean, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { UserEntity } from '../repository/user.entity';
+import { UserTypeDto } from './user-type.dto';
 
-export class UserDetailDto {
+export class UserDto {
     @ApiProperty({ description: 'User ID', example: 1 })
     @IsNumber()
     readonly id: number;
 
-    @ApiProperty({ description: 'User type', enum: UserType, example: 'admin' })
-    @IsEnum(UserType)
-    readonly type: string;
+    @ApiProperty({ description: 'User type', example: 'Admin' })
+    @IsString()
+    readonly type: UserTypeDto;
 
     @ApiProperty({ description: 'User staff code', example: 'K380' })
     @IsString()
@@ -48,16 +42,16 @@ export class UserDetailDto {
     @IsBoolean()
     readonly email: string;
 
-    static fromModel(model: UserEntity): UserDetailDto {
+    static fromModel(model: UserEntity): UserDto {
         return {
             id: model?.id,
-            type: model?.userType?.code,
+            type: UserTypeDto.fromModel(model?.userType),
             code: model?.code,
             name: model?.name,
             mobileTelNo: model?.mobileTelNo,
             officeTelNo: model?.officeTelNo,
             firstTimer: model?.firstTimer,
             email: model.email,
-        } as UserDetailDto;
+        } as UserDto;
     }
 }

@@ -13,10 +13,9 @@ import { ResourceNotFoundException } from 'src/common/exception/resource-not-fou
 import { AuthGuard } from 'src/common/guard/auth.guard';
 import { QueryParamUserDto } from './dto/query-param-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserSummaryDto } from './dto/user-summary.dto';
-import { UserDetailDto } from './dto/user-detail.dto';
 import { UserService } from './user.service';
 import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
+import { UserDto } from './dto/user.dto';
 
 @ApiTags('User')
 @UseGuards(AuthGuard)
@@ -29,13 +28,13 @@ export class UserController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: [UserSummaryDto],
+        type: [UserDto],
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findAll(
         @Query() query: QueryParamUserDto,
-    ): Promise<UserSummaryDto[] | PaginationBuilder> {
+    ): Promise<UserDto[] | PaginationBuilder> {
         // pagination logic
         if (query?.paginationMeta) {
             const tempLimit = query?.limit;
@@ -52,7 +51,7 @@ export class UserController {
 
         const userList = await this.userService.findAll(query);
 
-        return userList.map(UserSummaryDto.fromModel);
+        return userList.map(UserDto.fromModel);
     }
 
     @Get(':userId')
@@ -60,20 +59,20 @@ export class UserController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: UserDetailDto,
+        type: UserDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findOne(
         @Param('userId', ParseIntPipe) userId: number,
-    ): Promise<UserDetailDto> {
+    ): Promise<UserDto> {
         const user = await this.userService.findOne(userId);
 
         if (!user) {
             throw new ResourceNotFoundException('User ID was not found.');
         }
 
-        return UserDetailDto.fromModel(user);
+        return UserDto.fromModel(user);
     }
 
     @Put(':userId')
@@ -81,14 +80,14 @@ export class UserController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: UserDetailDto,
+        type: UserDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async update(
         @Param('userId', ParseIntPipe) userId: number,
         @Body() body: UpdateUserDto,
-    ): Promise<UserDetailDto> {
+    ): Promise<UserDto> {
         const user = await this.userService.findOne(userId);
 
         if (!user) {
@@ -97,6 +96,6 @@ export class UserController {
 
         const updatedUser = await this.userService.update(user, body);
 
-        return UserDetailDto.fromModel(updatedUser);
+        return UserDto.fromModel(updatedUser);
     }
 }
