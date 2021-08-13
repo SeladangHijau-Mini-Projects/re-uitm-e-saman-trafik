@@ -19,32 +19,28 @@ export class AddUserTable1615391391781 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'rank_id',
-                        type: 'int',
-                    },
-                    {
                         name: 'type_id',
                         type: 'int',
                     },
                     {
-                        name: 'user_code',
+                        name: 'code',
                         type: 'varchar',
                     },
                     {
-                        name: 'password',
+                        name: 'name',
                         type: 'varchar',
                     },
                     {
-                        name: 'fullname',
-                        type: 'varchar',
-                    },
-                    {
-                        name: 'phone_tel_no',
+                        name: 'mobile_tel_no',
                         type: 'varchar',
                         isNullable: true,
                     },
                     {
                         name: 'office_tel_no',
+                        type: 'varchar',
+                    },
+                    {
+                        name: 'email',
                         type: 'varchar',
                     },
                     {
@@ -68,14 +64,6 @@ export class AddUserTable1615391391781 implements MigrationInterface {
             true,
         );
 
-        await queryRunner.createForeignKey(
-            'users',
-            new TableForeignKey({
-                columnNames: ['rank_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'user_ranks',
-            }),
-        );
         await queryRunner.createForeignKey(
             'users',
             new TableForeignKey({

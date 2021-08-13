@@ -26,6 +26,7 @@ import { ReportSummaryDto } from './dto/report-summary.dto';
 import { ReportDetailDto } from './dto/report-detail.dto';
 import { UpdateStudentDto } from '../student/dto/update-student.dto';
 import { UpdateTransportDto } from '../transport/dto/update-transport.dto';
+import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
 
 @ApiTags('Report')
 @UseGuards(AuthGuard)
@@ -48,9 +49,23 @@ export class ReportController {
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async find(
-        @Query() param: ReportQueryParamDto,
-    ): Promise<ReportSummaryDto[]> {
-        const reportList = await this.reportService.findAll(param);
+        @Query() query: ReportQueryParamDto,
+    ): Promise<ReportSummaryDto[] | PaginationBuilder> {
+        // pagination logic
+        if (query?.paginationMeta) {
+            const tempLimit = query?.limit;
+            const tempPage = query?.page;
+            const reportList = await this.reportService.findAll(
+                new ReportQueryParamDto(),
+            );
+
+            query.limit = tempLimit;
+            query.page = tempPage;
+
+            return PaginationBuilder.build(reportList.length, query);
+        }
+
+        const reportList = await this.reportService.findAll(query);
 
         return reportList.map(ReportSummaryDto.fromModel);
     }

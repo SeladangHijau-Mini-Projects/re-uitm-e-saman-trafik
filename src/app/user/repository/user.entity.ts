@@ -1,5 +1,4 @@
 import { Expose } from 'class-transformer';
-import { ReportHistoryEntity } from 'src/app/report/repository/report-history.entity';
 import { ReportEntity } from 'src/app/report/repository/report.entity';
 import {
     Column,
@@ -9,7 +8,6 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserRankEntity } from './user-rank.entity';
 import { UserTypeEntity } from './user-type.entity';
 
 @Entity('users')
@@ -18,25 +16,21 @@ export class UserEntity {
     @Expose()
     id: number;
 
-    @Column({ name: 'rank_id' })
-    @Expose()
-    rankId: number;
-
     @Column({ name: 'type_id' })
     @Expose()
     typeId: number;
 
-    @Column({ name: 'user_code' })
+    @Column({ name: 'code' })
     @Expose()
-    userCode: string;
+    code: string;
 
-    @Column({ name: 'fullname' })
+    @Column({ name: 'name' })
     @Expose()
-    fullname: string;
+    name: string;
 
-    @Column({ name: 'phone_tel_no' })
+    @Column({ name: 'mobile_tel_no' })
     @Expose()
-    phoneTelNo: string;
+    mobileTelNo: string;
 
     @Column({ name: 'office_tel_no' })
     @Expose()
@@ -58,10 +52,6 @@ export class UserEntity {
     @Expose()
     updatedAt: Date;
 
-    @OneToOne(() => UserRankEntity, { eager: true })
-    @JoinColumn({ name: 'rank_id' })
-    userRank: UserRankEntity;
-
     @OneToOne(() => UserTypeEntity, { eager: true })
     @JoinColumn({ name: 'type_id' })
     userType: UserTypeEntity;
@@ -72,11 +62,4 @@ export class UserEntity {
     )
     @JoinColumn({ name: 'id' })
     reports: ReportEntity[];
-
-    @OneToMany(
-        () => ReportHistoryEntity,
-        (reportHistory: ReportHistoryEntity) => reportHistory.reportHistoryUser,
-    )
-    @JoinColumn({ name: 'id' })
-    reportHistories: ReportHistoryEntity[];
 }

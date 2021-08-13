@@ -1,5 +1,5 @@
 {
-  "name": "re-uitm-e-saman-trafik",
+  "name": "e-saman-api",
   "version": "0.0.1",
   "description": "",
   "author": "nadzmiidzham@gmail.com",
@@ -52,7 +52,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",
     "swagger-ui-express": "^4.1.4",
-    "typeorm": "^0.2.31"
+    "typeorm": "^0.2.31",
+    "typeorm-naming-strategies": "^2.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.0.0",

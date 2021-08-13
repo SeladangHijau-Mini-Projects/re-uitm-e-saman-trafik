@@ -1,31 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber, IsNumberString, IsString } from 'class-validator';
 import { UserEntity } from '../repository/user.entity';
+import { UserTypeDto } from './user-type.dto';
 
-export class UserSummaryDto {
+export class UserDto {
     @ApiProperty({ description: 'User ID', example: 1 })
     @IsNumber()
     readonly id: number;
 
-    @ApiProperty({ description: 'User rank', example: 'Jawatan 1' })
-    @IsString()
-    readonly rank: string;
-
     @ApiProperty({ description: 'User type', example: 'Admin' })
     @IsString()
-    readonly type: string;
+    readonly type: UserTypeDto;
 
     @ApiProperty({ description: 'User staff code', example: 'K380' })
     @IsString()
-    readonly userCode: string;
+    readonly code: string;
 
     @ApiProperty({ description: 'User full name', example: 'John Doe' })
     @IsString()
-    readonly fullname: string;
+    readonly name: string;
 
-    @ApiProperty({ description: 'User phone tel no', example: '0111234567' })
+    @ApiProperty({ description: 'User mobile tel no', example: '0111234567' })
     @IsNumberString()
-    readonly phoneTelNo: string;
+    readonly mobileTelNo: string;
 
     @ApiProperty({ description: 'User office tel no', example: '044911234' })
     @IsNumberString()
@@ -45,17 +42,16 @@ export class UserSummaryDto {
     @IsBoolean()
     readonly email: string;
 
-    static fromModel(model: UserEntity): UserSummaryDto {
+    static fromModel(model: UserEntity): UserDto {
         return {
             id: model?.id,
-            rank: model?.userRank?.description,
-            type: model?.userType?.description,
-            userCode: model?.userCode,
-            fullname: model?.fullname,
-            phoneTelNo: model?.phoneTelNo,
+            type: UserTypeDto.fromModel(model?.userType),
+            code: model?.code,
+            name: model?.name,
+            mobileTelNo: model?.mobileTelNo,
             officeTelNo: model?.officeTelNo,
             firstTimer: model?.firstTimer,
             email: model.email,
-        } as UserSummaryDto;
+        } as UserDto;
     }
 }

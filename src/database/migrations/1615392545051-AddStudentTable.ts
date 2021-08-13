@@ -1,9 +1,4 @@
-import {
-    MigrationInterface,
-    QueryRunner,
-    Table,
-    TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class AddStudentTable1615392545051 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
@@ -19,19 +14,11 @@ export class AddStudentTable1615392545051 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'course_id',
-                        type: 'int',
-                    },
-                    {
-                        name: 'college_id',
-                        type: 'int',
-                    },
-                    {
-                        name: 'student_code',
+                        name: 'code',
                         type: 'varchar',
                     },
                     {
-                        name: 'fullname',
+                        name: 'name',
                         type: 'varchar',
                     },
                     {
@@ -48,23 +35,6 @@ export class AddStudentTable1615392545051 implements MigrationInterface {
                 ],
             }),
             true,
-        );
-
-        await queryRunner.createForeignKey(
-            'students',
-            new TableForeignKey({
-                columnNames: ['course_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'courses',
-            }),
-        );
-        await queryRunner.createForeignKey(
-            'students',
-            new TableForeignKey({
-                columnNames: ['college_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'colleges',
-            }),
         );
     }
 

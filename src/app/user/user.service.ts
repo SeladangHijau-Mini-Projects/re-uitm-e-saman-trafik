@@ -5,7 +5,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { QueryParamUserDto } from './dto/query-param-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserQueryFilter } from './query-filter/user.query-filter';
-import { UserRankEntity } from './repository/user-rank.entity';
 import { UserTypeEntity } from './repository/user-type.entity';
 import { UserEntity } from './repository/user.entity';
 
@@ -16,24 +15,12 @@ export class UserService {
         private readonly userRepository: Repository<UserEntity>,
         @InjectRepository(UserTypeEntity)
         private readonly userTypeRepository: Repository<UserTypeEntity>,
-        @InjectRepository(UserRankEntity)
-        private readonly userRankRepository: Repository<UserRankEntity>,
     ) {}
 
     async findAll(dto: QueryParamUserDto): Promise<UserEntity[]> {
-        if (dto.rank) {
-            const rank = await this.userRankRepository.findOne({
-                name: dto.rank,
-            });
-
-            dto = {
-                ...dto,
-                rankId: rank.id,
-            } as QueryParamUserDto;
-        }
         if (dto.type) {
             const type = await this.userTypeRepository.findOne({
-                name: dto.type,
+                code: dto?.type,
             });
 
             dto = {
@@ -51,12 +38,8 @@ export class UserService {
         return this.userRepository.findOne(userId);
     }
 
-    async findOneByUserCode(userCode: string): Promise<UserEntity> {
-        return this.userRepository.findOne({ userCode });
-    }
-
-    async findAllRank(): Promise<UserRankEntity[]> {
-        return this.userRankRepository.find();
+    async findOneByCode(code: string): Promise<UserEntity> {
+        return this.userRepository.findOne({ code });
     }
 
     async findAllType(): Promise<UserTypeEntity[]> {
@@ -64,46 +47,33 @@ export class UserService {
     }
 
     async create(dto: CreateUserDto): Promise<UserEntity> {
-        const rank = await this.userRankRepository.findOne({ name: dto.rank });
-        const type = await this.userTypeRepository.findOne({ name: dto.type });
+        const type = await this.userTypeRepository.findOne({ code: dto?.type });
 
         return this.userRepository.save({
-            rankId: rank.id,
-            typeId: type.id,
-            userCode: dto.userCode,
-            fullname: dto.fullname,
-            phoneTelNo: dto.phoneTelNo,
-            officeTelNo: dto.officeTelNo,
-            email: dto.email,
+            typeId: type?.id,
+            code: dto?.code,
+            name: dto?.name,
+            mobileTelNo: dto?.mobileTelNo,
+            officeTelNo: dto?.officeTelNo,
+            email: dto?.email,
             firstTimer: true,
-            userRank: rank,
             userType: type,
         } as UserEntity);
     }
 
     async update(user: UserEntity, dto: UpdateUserDto): Promise<UserEntity> {
-        let rank = null;
-        let type = null;
-
-        if (dto.rank) {
-            rank = await this.userRankRepository.findOne({ name: dto.rank });
-        }
-        if (dto.type) {
-            type = await this.userTypeRepository.findOne({ name: dto.type });
-        }
+        const type = await this.userTypeRepository.findOne({ code: dto?.type });
 
         return this.userRepository.save(
             {
                 id: user.id,
-                rankId: rank?.id ?? user.rankId,
                 typeId: type?.id ?? user.typeId,
-                userCode: dto?.userCode ?? user.userCode,
-                fullname: dto?.fullname ?? user.fullname,
-                phoneTelNo: dto?.phoneTelNo ?? user.phoneTelNo,
+                code: dto?.code ?? user.code,
+                name: dto?.name ?? user.name,
+                mobileTelNo: dto?.mobileTelNo ?? user.mobileTelNo,
                 officeTelNo: dto?.officeTelNo ?? user.officeTelNo,
                 firstTimer: dto?.firstTimer ?? user.firstTimer,
                 email: dto?.email ?? user.email,
-                userRank: rank ?? user.userRank,
                 userType: type ?? user.userType,
             } as UserEntity,
             { reload: true },

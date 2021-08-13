@@ -2,6 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class SeedFakeAuth1618594175432 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE auths AUTO_INCREMENT = 1`);
         await queryRunner.query(
             `
                 INSERT INTO auths(

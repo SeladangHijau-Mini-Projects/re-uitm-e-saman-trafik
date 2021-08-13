@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 
 @Module({
@@ -20,6 +21,7 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
                     database: configService.get<string>('MYSQL_DATABASE'),
                     entities: ['dist/**/**/*.entity{.ts,.js}'],
                     logging: true,
+                    namingStrategy: new SnakeNamingStrategy(),
                 };
             },
         }),

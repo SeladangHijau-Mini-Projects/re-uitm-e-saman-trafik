@@ -1,8 +1,8 @@
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
-import { MailService } from './mail.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { NotificationService } from './notification.service';
 
 @Module({
     imports: [
@@ -34,7 +34,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             },
         }),
     ],
-    providers: [MailService],
-    exports: [MailService],
+    providers: [NotificationService],
+    exports: [NotificationService],
 })
-export class MailModule {}
+export class NotificationModule {}

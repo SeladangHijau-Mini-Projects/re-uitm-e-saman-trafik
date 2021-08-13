@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransportStatusEntity } from './repository/transport-status.entity';
 import { TransportTypeEntity } from './repository/transport-type.entity';
 import { TransportEntity } from './repository/transport.entity';
+import { TransportController } from './transport.controller';
 import { TransportService } from './transport.service';
 
 @Module({
@@ -13,6 +14,7 @@ import { TransportService } from './transport.service';
             TransportStatusEntity,
         ]),
     ],
+    controllers: [TransportController],
     providers: [TransportService],
     exports: [TransportService],
 })

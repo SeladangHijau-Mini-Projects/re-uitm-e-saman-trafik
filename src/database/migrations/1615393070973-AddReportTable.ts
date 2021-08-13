@@ -27,6 +27,10 @@ export class AddReportTable1615393070973 implements MigrationInterface {
                         type: 'int',
                     },
                     {
+                        name: 'student_id',
+                        type: 'int',
+                    },
+                    {
                         name: 'user_id',
                         type: 'int',
                     },
@@ -64,6 +68,14 @@ export class AddReportTable1615393070973 implements MigrationInterface {
                 columnNames: ['transport_id'],
                 referencedColumnNames: ['id'],
                 referencedTableName: 'transports',
+            }),
+        );
+        await queryRunner.createForeignKey(
+            'reports',
+            new TableForeignKey({
+                columnNames: ['student_id'],
+                referencedColumnNames: ['id'],
+                referencedTableName: 'students',
             }),
         );
         await queryRunner.createForeignKey(

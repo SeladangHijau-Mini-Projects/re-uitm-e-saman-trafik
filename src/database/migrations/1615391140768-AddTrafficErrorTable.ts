@@ -1,9 +1,4 @@
-import {
-    MigrationInterface,
-    QueryRunner,
-    Table,
-    TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class AddTrafficErrorTable1615391140768 implements MigrationInterface {
     async up(queryRunner: QueryRunner): Promise<void> {
@@ -19,12 +14,7 @@ export class AddTrafficErrorTable1615391140768 implements MigrationInterface {
                         generationStrategy: 'increment',
                     },
                     {
-                        name: 'group_id',
-                        type: 'int',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'name',
+                        name: 'code',
                         type: 'varchar',
                     },
                     {
@@ -46,15 +36,6 @@ export class AddTrafficErrorTable1615391140768 implements MigrationInterface {
                 ],
             }),
             true,
-        );
-
-        await queryRunner.createForeignKey(
-            'traffic_errors',
-            new TableForeignKey({
-                columnNames: ['group_id'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'traffic_errors',
-            }),
         );
     }
 

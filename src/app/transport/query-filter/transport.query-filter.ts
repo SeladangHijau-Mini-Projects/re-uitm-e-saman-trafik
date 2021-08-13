@@ -1,22 +1,10 @@
 import { BaseQueryFilterBuilder } from 'src/common/query-params/base.query-filter';
-import { Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { MoreThanOrEqual, LessThanOrEqual, Between } from 'typeorm';
 
-export class ReportQueryFilter extends BaseQueryFilterBuilder {
+export class TransportQueryFilter extends BaseQueryFilterBuilder {
     id(value: number): object {
         return {
             id: value,
-        };
-    }
-
-    statusId(value: number): object {
-        return {
-            statusId: value,
-        };
-    }
-
-    transportId(value: number): object {
-        return {
-            transportId: value,
         };
     }
 
@@ -26,15 +14,39 @@ export class ReportQueryFilter extends BaseQueryFilterBuilder {
         };
     }
 
-    userId(value: number): object {
+    typeId(value: number): object {
         return {
-            userId: value,
+            typeId: value,
         };
     }
 
-    location(value: string): object {
+    statusId(value: number): object {
         return {
-            location: value,
+            statusId: value,
+        };
+    }
+
+    plateNo(value: string): object {
+        return {
+            plateNo: value,
+        };
+    }
+
+    passCode(value: string): object {
+        return {
+            passCode: value,
+        };
+    }
+
+    createdAt(value: Date): object {
+        return {
+            createdAt: value,
+        };
+    }
+
+    updatedAt(value: Date): object {
+        return {
+            updatedAt: value,
         };
     }
 
