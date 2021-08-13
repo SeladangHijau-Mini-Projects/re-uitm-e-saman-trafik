@@ -47,13 +47,6 @@ export class ReportSummaryDto {
     transportStatus: string;
 
     @ApiProperty({
-        description: 'Transport type value',
-        example: 'Car',
-    })
-    @IsString()
-    transportType: string;
-
-    @ApiProperty({
         description: 'Transport plate no',
         example: 'QWE 123',
     })
@@ -65,7 +58,7 @@ export class ReportSummaryDto {
         example: 'K201512563BE',
     })
     @IsString()
-    transportPassCode: string;
+    transportCode: string;
 
     @ApiProperty({
         description: 'Student code',
@@ -79,28 +72,7 @@ export class ReportSummaryDto {
         example: 'Muhammad Nadzmi Bin Mohamed Idzham',
     })
     @IsString()
-    studentFullname: string;
-
-    @ApiProperty({
-        description: 'Student course value',
-        example: 'Ijazah Sarjana Muda Sains Komputer Dan Matematik',
-    })
-    @IsString()
-    studentCourse: string;
-
-    @ApiProperty({
-        description: 'Student faculty value',
-        example: 'Fakulti Sains Komputer Dan Matematik',
-    })
-    @IsString()
-    studentFaculty: string;
-
-    @ApiProperty({
-        description: 'Student college value',
-        example: 'Delima',
-    })
-    @IsString()
-    studentCollege: string;
+    studentName: string;
 
     @ApiProperty({
         description: 'Error list',
@@ -112,32 +84,20 @@ export class ReportSummaryDto {
     static fromModel(model: ReportEntity): ReportSummaryDto {
         return {
             id: model?.id,
-            status: model?.reportStatus?.description,
+            status: model?.status?.description,
             location: model?.location,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
-            remark:
-                model?.reportHistories && model?.reportHistories.length > 0
-                    ? model?.reportHistories[model?.reportHistories.length - 1]
-                          ?.remark
-                    : null,
-            transportStatus:
-                model?.reportTransport?.transportStatus?.description,
-            transportType: model?.reportTransport?.transportType?.description,
-            transportPlateNo: model?.reportTransport?.plateNo,
-            transportPassCode: model?.reportTransport?.passCode,
-            studentCode: model?.reportStudent?.studentCode,
-            studentFullname: model?.reportStudent?.fullname,
-            studentCourse: model?.reportStudent?.studentCourse?.description,
-            studentFaculty:
-                model?.reportStudent?.studentCourse?.courseFaculty?.description,
-            studentCollege: model?.reportStudent?.studentCollege?.description,
-            trafficErrors: model?.reportReportTrafficErrors
-                ? model?.reportReportTrafficErrors?.map(
+            remark: null,
+            transportStatus: model?.transport?.status?.description,
+            transportPlateNo: model?.transport?.plateNo,
+            transportCode: model?.transport?.code,
+            studentCode: model?.student?.code,
+            studentName: model?.student?.name,
+            trafficErrors: model?.reportTrafficErrors
+                ? model?.reportTrafficErrors?.map(
                       (error: object) =>
-                          error['reportTrafficErrorTrafficError'][
-                              'description'
-                          ],
+                          error['reportTrafficErrors']['description'],
                   )
                 : [],
         } as ReportSummaryDto;

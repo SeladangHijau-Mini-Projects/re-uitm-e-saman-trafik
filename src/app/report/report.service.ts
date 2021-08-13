@@ -9,7 +9,6 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportQueryFilter } from './query-filter/report.query-filter';
-import { ReportHistoryEntity } from './repository/report-history.entity';
 import { ReportStatusEntity } from './repository/report-status.entity';
 import { ReportEntity } from './repository/report.entity';
 
@@ -18,10 +17,6 @@ export class ReportService {
     constructor(
         @InjectRepository(ReportEntity)
         private readonly reportRepository: Repository<ReportEntity>,
-        @InjectRepository(ReportHistoryEntity)
-        private readonly reportHistoryRepository: Repository<
-            ReportHistoryEntity
-        >,
         @InjectRepository(ReportStatusEntity)
         private readonly reportStatusRepository: Repository<ReportStatusEntity>,
         private readonly trafficErrorService: TrafficErrorService,
@@ -33,7 +28,7 @@ export class ReportService {
     async findAll(dto: ReportQueryParamDto): Promise<ReportEntity[]> {
         if (dto.status) {
             const status = await this.reportStatusRepository.findOne({
-                name: dto.status,
+                code: dto.status,
             });
 
             dto = {
@@ -83,7 +78,7 @@ export class ReportService {
     }
 
     async findStatus(status: string): Promise<ReportStatusEntity> {
-        return this.reportStatusRepository.findOne({ name: status });
+        return this.reportStatusRepository.findOne({ code: status });
     }
 
     async findAllStatus(): Promise<ReportStatusEntity[]> {
@@ -92,12 +87,12 @@ export class ReportService {
 
     async create(dto: CreateReportDto): Promise<ReportEntity> {
         const status = await this.reportStatusRepository.findOne({
-            name: dto.status,
+            code: dto.status,
         });
 
         // create new report
         const report = await this.reportRepository.save({
-            reportStatus: status,
+            status,
             transportId: dto.transportId,
             userId: dto.userId,
             studentId: dto.studentId,
@@ -106,16 +101,6 @@ export class ReportService {
 
         // create new report history
         if (report) {
-            // add report history
-            await this.reportHistoryRepository.save({
-                reportId: report.id,
-                statusId: report.statusId,
-                userId: report.userId,
-                transportId: report.transportId,
-                location: report.location,
-                remark: dto.remark,
-            } as ReportHistoryEntity);
-
             // create traffic error
             await this.trafficErrorService.createAll(
                 report.id,
@@ -131,13 +116,13 @@ export class ReportService {
         dto: UpdateReportDto,
     ): Promise<ReportEntity> {
         const status = await this.reportStatusRepository.findOne({
-            name: dto.status,
+            code: dto.status,
         });
 
         // update report
         const updatedReport = await this.reportRepository.save({
             id: reportId,
-            reportStatus: status,
+            status,
             transportId: dto.transportId,
             userId: dto.userId,
             studentId: dto.studentId,
@@ -151,19 +136,6 @@ export class ReportService {
                 dto.trafficErrors,
             );
         }
-
-        // create new history with remark
-        await this.reportHistoryRepository.save(
-            {
-                reportId: updatedReport.id,
-                reportHistoryStatus: status,
-                userId: updatedReport.userId,
-                transportId: updatedReport.transportId,
-                location: updatedReport.location,
-                remark: dto.remark,
-            } as ReportHistoryEntity,
-            { reload: true },
-        );
 
         return updatedReport;
     }

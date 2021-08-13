@@ -1,25 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { TransportStatus } from '../enum/transport-status.enum';
-import { TransportType } from '../enum/transport-type.enum';
 import { TransportEntity } from '../repository/transport.entity';
 
 export class TransportDetailDto {
     @ApiProperty({ description: 'Report ID', example: 1 })
     @IsNumber()
     id: number;
-
-    @ApiProperty({ description: 'Student ID', example: 1 })
-    @IsNumber()
-    studentId: number;
-
-    @ApiProperty({
-        description: 'Transport type',
-        enum: TransportType,
-        example: TransportType.Car,
-    })
-    @IsEnum(TransportType)
-    type: string;
 
     @ApiProperty({
         description: 'Transport status',
@@ -35,7 +22,7 @@ export class TransportDetailDto {
 
     @ApiProperty({ description: 'Transport pass code', example: 'QWER1234' })
     @IsString()
-    passCode: string;
+    code: string;
 
     @ApiProperty({
         description: 'Transport registered date',
@@ -54,11 +41,9 @@ export class TransportDetailDto {
     static fromModel(model: TransportEntity): TransportDetailDto {
         return {
             id: model?.id,
-            studentId: model?.studentId,
-            type: model?.transportType?.name,
-            status: model?.transportStatus.name,
+            status: model?.status?.code,
             plateNo: model?.plateNo,
-            passCode: model?.passCode,
+            code: model?.code,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
         } as TransportDetailDto;

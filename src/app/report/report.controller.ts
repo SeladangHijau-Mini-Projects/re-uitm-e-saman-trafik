@@ -175,7 +175,7 @@ export class ReportController {
 
         // validate status
         const status = await this.reportService.findStatus(
-            body?.status ?? report?.reportStatus?.name,
+            body?.status ?? report?.status?.code,
         );
         if (!status) {
             throw new ResourceNotFoundException('Status was not found.');
@@ -233,7 +233,7 @@ export class ReportController {
         // update report
         await this.reportService.update(report.id, {
             userId: user?.id ?? report.userId,
-            status: status?.name ?? report.reportStatus.name,
+            status: status?.code ?? report.status.code,
             studentId: student?.id ?? report.studentId,
             transportId: transport?.id ?? report.transportId,
             location: body.location ?? report.location,

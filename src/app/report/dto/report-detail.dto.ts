@@ -75,7 +75,7 @@ export class ReportDetailDto {
         example: 'K201512563BE',
     })
     @IsString()
-    transportPassCode: string;
+    transportCode: string;
 
     @ApiProperty({
         description: 'Student code',
@@ -89,7 +89,7 @@ export class ReportDetailDto {
         example: 'Muhammad Nadzmi Bin Mohamed Idzham',
     })
     @IsString()
-    studentFullname: string;
+    studentName: string;
 
     @ApiProperty({
         description: 'Student course key',
@@ -125,29 +125,19 @@ export class ReportDetailDto {
     static fromModel(model: ReportEntity): ReportDetailDto {
         return {
             id: model?.id,
-            status: model?.reportStatus?.name,
+            status: model?.status?.code,
             location: model?.location,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
-            remark:
-                model?.reportHistories && model?.reportHistories.length > 0
-                    ? model?.reportHistories[model?.reportHistories.length - 1]
-                          ?.remark
-                    : null,
-            transportStatus: model?.reportTransport?.transportStatus?.name,
-            transportType: model?.reportTransport?.transportType?.name,
-            transportPlateNo: model?.reportTransport?.plateNo,
-            transportPassCode: model?.reportTransport?.passCode,
-            studentCode: model?.reportStudent?.studentCode,
-            studentFullname: model?.reportStudent?.fullname,
-            studentCourse: model?.reportStudent?.studentCourse?.name,
-            studentFaculty:
-                model?.reportStudent?.studentCourse?.courseFaculty?.name,
-            studentCollege: model?.reportStudent?.studentCollege?.name,
-            trafficErrors: model?.reportReportTrafficErrors
-                ? model?.reportReportTrafficErrors?.map(
-                      (error: object) =>
-                          error['reportTrafficErrorTrafficError']['name'],
+            remark: null,
+            transportStatus: model?.transport?.status?.code,
+            transportPlateNo: model?.transport?.plateNo,
+            transportCode: model?.transport?.code,
+            studentCode: model?.student?.code,
+            studentName: model?.student?.name,
+            trafficErrors: model?.reportTrafficErrors
+                ? model?.reportTrafficErrors?.map(
+                      (error: object) => error['reportTrafficErrors']['name'],
                   )
                 : [],
         } as ReportDetailDto;

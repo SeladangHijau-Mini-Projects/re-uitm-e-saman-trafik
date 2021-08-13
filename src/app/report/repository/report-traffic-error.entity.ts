@@ -37,18 +37,17 @@ export class ReportTrafficErrorEntity {
 
     @ManyToOne(
         () => ReportEntity,
-        (report: ReportEntity) => report.reportReportTrafficErrors,
+        (report: ReportEntity) => report.reportTrafficErrors,
         { eager: true },
     )
     @JoinColumn({ name: 'report_id' })
-    reportTrafficErrorReport: ReportEntity;
+    report: ReportEntity;
 
     @ManyToOne(
         () => TrafficErrorEntity,
-        (trafficError: TrafficErrorEntity) =>
-            trafficError.trafficErrorReportTrafficErrors,
+        (trafficError: TrafficErrorEntity) => trafficError.reportTrafficErrors,
         { eager: true },
     )
     @JoinColumn({ name: 'traffic_error_id' })
-    reportTrafficErrorTrafficError: TrafficErrorEntity;
+    trafficError: TrafficErrorEntity;
 }
