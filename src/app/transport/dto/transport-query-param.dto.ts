@@ -8,7 +8,6 @@ import {
 } from 'class-validator';
 import { BaseQueryParamDTO } from 'src/common/query-params/base-dto.queryparam';
 import { TransportStatus } from '../enum/transport-status.enum';
-import { TransportType } from '../enum/transport-type.enum';
 
 export class TransportQueryParamDto extends BaseQueryParamDTO {
     @ApiProperty({ required: false, description: 'Transport ID', example: 1 })
@@ -23,28 +22,9 @@ export class TransportQueryParamDto extends BaseQueryParamDTO {
 
     @ApiProperty({
         required: false,
-        description: 'Transport type',
-        enum: TransportType,
-        example: TransportType.Car,
-    })
-    @IsEnum(TransportType)
-    @IsOptional()
-    type: string;
-
-    @ApiProperty({
-        required: false,
-        description: 'Transport type ID',
-        example: 1,
-    })
-    @IsNumber()
-    @IsOptional()
-    typeId: number;
-
-    @ApiProperty({
-        required: false,
         description: 'Transport status',
         enum: TransportStatus,
-        example: TransportStatus.Locked,
+        example: TransportStatus.Hold,
     })
     @IsEnum(TransportStatus)
     @IsOptional()

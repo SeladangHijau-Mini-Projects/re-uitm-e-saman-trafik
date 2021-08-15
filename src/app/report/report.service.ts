@@ -1,15 +1,18 @@
+/* eslint-disable @typescript-eslint/no-extra-parens */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
 import { TrafficErrorService } from '../traffic-error/traffic-error.service';
+import { CreateTransportDto } from '../transport/dto/create-transport.dto';
 import { TransportService } from '../transport/transport.service';
+import { UserEntity } from '../user/repository/user.entity';
 import { UserService } from '../user/user.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportQueryFilter } from './query-filter/report.query-filter';
-import { ReportHistoryEntity } from './repository/report-history.entity';
 import { ReportStatusEntity } from './repository/report-status.entity';
 import { ReportEntity } from './repository/report.entity';
 
@@ -18,10 +21,6 @@ export class ReportService {
     constructor(
         @InjectRepository(ReportEntity)
         private readonly reportRepository: Repository<ReportEntity>,
-        @InjectRepository(ReportHistoryEntity)
-        private readonly reportHistoryRepository: Repository<
-            ReportHistoryEntity
-        >,
         @InjectRepository(ReportStatusEntity)
         private readonly reportStatusRepository: Repository<ReportStatusEntity>,
         private readonly trafficErrorService: TrafficErrorService,
@@ -33,7 +32,7 @@ export class ReportService {
     async findAll(dto: ReportQueryParamDto): Promise<ReportEntity[]> {
         if (dto.status) {
             const status = await this.reportStatusRepository.findOne({
-                name: dto.status,
+                code: dto.status,
             });
 
             dto = {
@@ -71,59 +70,75 @@ export class ReportService {
         }
 
         const query = new ReportQueryFilter(dto).toTypeormQuery();
-        query.relations = ['reportHistories', 'reportReportTrafficErrors'];
+        query.relations = ['reportTrafficErrors'];
 
         return this.reportRepository.find(query);
     }
 
     async findOne(reportId: number): Promise<ReportEntity> {
         return this.reportRepository.findOne(reportId, {
-            relations: ['reportHistories', 'reportReportTrafficErrors'],
+            relations: ['reportTrafficErrors'],
         });
     }
 
     async findStatus(status: string): Promise<ReportStatusEntity> {
-        return this.reportStatusRepository.findOne({ name: status });
+        return this.reportStatusRepository.findOne({ code: status });
     }
 
     async findAllStatus(): Promise<ReportStatusEntity[]> {
         return this.reportStatusRepository.find();
     }
 
-    async create(dto: CreateReportDto): Promise<ReportEntity> {
-        const status = await this.reportStatusRepository.findOne({
-            name: dto.status,
-        });
+    async create(
+        user: UserEntity,
+        dto: CreateReportDto,
+    ): Promise<ReportEntity> {
+        // validate & create student
+        let student = await this.studentService.findOneByStudentCode(
+            dto?.studentCode,
+        );
+        student =
+            !student && dto?.studentCode && dto?.studentName
+                ? await this.studentService.create({
+                      code: dto?.studentCode,
+                      name: dto?.studentName,
+                  } as CreateStudentDto)
+                : student;
+
+        // validate & create transport
+        let transport = await this.transportService.findOneByPlateNo(
+            dto?.transportPlateNo,
+        );
+        transport = !transport
+            ? await this.transportService.create({
+                  plateNo: dto?.transportPlateNo,
+                  code: dto?.transportCode,
+                  status: dto?.transportStatus,
+              } as CreateTransportDto)
+            : transport;
 
         // create new report
+        const status = await this.reportStatusRepository.findOne({
+            code: dto?.status,
+        });
         const report = await this.reportRepository.save({
-            reportStatus: status,
-            transportId: dto.transportId,
-            userId: dto.userId,
-            studentId: dto.studentId,
-            location: dto.location,
+            status,
+            location: dto?.location,
+            user,
+            transport,
+            student,
         } as ReportEntity);
 
         // create new report history
         if (report) {
-            // add report history
-            await this.reportHistoryRepository.save({
-                reportId: report.id,
-                statusId: report.statusId,
-                userId: report.userId,
-                transportId: report.transportId,
-                location: report.location,
-                remark: dto.remark,
-            } as ReportHistoryEntity);
-
             // create traffic error
             await this.trafficErrorService.createAll(
                 report.id,
-                dto.trafficErrorList,
+                dto.trafficErrors,
             );
         }
 
-        return report;
+        return this.reportRepository.findOne(report?.id);
     }
 
     async update(
@@ -131,13 +146,13 @@ export class ReportService {
         dto: UpdateReportDto,
     ): Promise<ReportEntity> {
         const status = await this.reportStatusRepository.findOne({
-            name: dto.status,
+            code: dto.status,
         });
 
         // update report
         const updatedReport = await this.reportRepository.save({
             id: reportId,
-            reportStatus: status,
+            status,
             transportId: dto.transportId,
             userId: dto.userId,
             studentId: dto.studentId,
@@ -151,19 +166,6 @@ export class ReportService {
                 dto.trafficErrors,
             );
         }
-
-        // create new history with remark
-        await this.reportHistoryRepository.save(
-            {
-                reportId: updatedReport.id,
-                reportHistoryStatus: status,
-                userId: updatedReport.userId,
-                transportId: updatedReport.transportId,
-                location: updatedReport.location,
-                remark: dto.remark,
-            } as ReportHistoryEntity,
-            { reload: true },
-        );
 
         return updatedReport;
     }

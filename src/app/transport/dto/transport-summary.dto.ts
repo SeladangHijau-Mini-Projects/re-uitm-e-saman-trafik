@@ -7,17 +7,6 @@ export class TransportSummaryDto {
     @IsNumber()
     id: number;
 
-    @ApiProperty({ description: 'Student ID', example: 1 })
-    @IsNumber()
-    studentId: number;
-
-    @ApiProperty({
-        description: 'Transport type',
-        example: 'Kereta',
-    })
-    @IsString()
-    type: string;
-
     @ApiProperty({
         description: 'Transport status',
         example: 'Dikunci',
@@ -31,7 +20,7 @@ export class TransportSummaryDto {
 
     @ApiProperty({ description: 'Transport pass code', example: 'QWER1234' })
     @IsString()
-    passCode: string;
+    code: string;
 
     @ApiProperty({
         description: 'Transport registered date',
@@ -50,11 +39,9 @@ export class TransportSummaryDto {
     static fromModel(model: TransportEntity): TransportSummaryDto {
         return {
             id: model?.id,
-            studentId: model?.studentId,
-            type: model?.transportType?.description,
-            status: model?.transportStatus.description,
+            status: model?.status.description,
             plateNo: model?.plateNo,
-            passCode: model?.passCode,
+            code: model?.code,
             createdAt: model?.createdAt,
             updatedAt: model?.updatedAt,
         } as TransportSummaryDto;

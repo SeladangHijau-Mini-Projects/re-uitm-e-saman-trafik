@@ -68,7 +68,7 @@ export class UpdateReportDto {
     })
     @IsString()
     @IsOptional()
-    transportPassCode: string;
+    transportCode: string;
 
     @ApiProperty({
         description: 'Student transport type',
@@ -82,7 +82,7 @@ export class UpdateReportDto {
     @ApiProperty({
         description: 'Student transport status',
         enum: TransportStatus,
-        example: TransportStatus.Locked,
+        example: TransportStatus.Hold,
     })
     @IsEnum(TransportStatus)
     @IsOptional()

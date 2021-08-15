@@ -7,7 +7,6 @@ import { TransportQueryParamDto } from './dto/transport-query-param.dto';
 import { UpdateTransportDto } from './dto/update-transport.dto';
 import { TransportQueryFilter } from './query-filter/transport.query-filter';
 import { TransportStatusEntity } from './repository/transport-status.entity';
-import { TransportTypeEntity } from './repository/transport-type.entity';
 import { TransportEntity } from './repository/transport.entity';
 
 @Injectable()
@@ -15,10 +14,6 @@ export class TransportService {
     constructor(
         @InjectRepository(TransportEntity)
         private readonly transportRepository: Repository<TransportEntity>,
-        @InjectRepository(TransportTypeEntity)
-        private readonly transportTypeRepository: Repository<
-            TransportTypeEntity
-        >,
         @InjectRepository(TransportStatusEntity)
         private readonly transportStatusRepository: Repository<
             TransportStatusEntity
@@ -33,19 +28,9 @@ export class TransportService {
             return this.transportRepository.find({ withDeleted });
         }
 
-        if (param.type) {
-            const type = await this.transportTypeRepository.findOne({
-                name: param.type,
-            });
-
-            param = {
-                ...param,
-                typeId: type?.id,
-            } as TransportQueryParamDto;
-        }
         if (param.status) {
             const status = await this.transportStatusRepository.findOne({
-                name: param.status,
+                code: param.status,
             });
 
             param = {
@@ -73,24 +58,15 @@ export class TransportService {
         return this.transportStatusRepository.find();
     }
 
-    async findAllType(): Promise<TransportTypeEntity[]> {
-        return this.transportTypeRepository.find();
-    }
-
     async create(dto: CreateTransportDto): Promise<TransportEntity> {
-        const type = await this.transportTypeRepository.findOne({
-            name: dto.type,
-        });
         const status = await this.transportStatusRepository.findOne({
-            name: dto.status,
+            code: dto?.status,
         });
 
         return this.transportRepository.save({
-            plateNo: dto.plateNo,
-            passCode: dto.passCode,
-            studentId: dto.studentId,
-            transportType: type,
-            transportStatus: status,
+            code: dto?.code,
+            plateNo: dto?.plateNo,
+            status,
         } as TransportEntity);
     }
 
@@ -104,11 +80,9 @@ export class TransportService {
         if (!existingTransport) {
             if (isAllowCreate) {
                 return this.create({
-                    plateNo: dto.plateNo,
-                    passCode: dto.passCode,
-                    studentId: dto.studentId,
-                    type: dto.type,
-                    status: dto.status,
+                    plateNo: dto?.plateNo,
+                    code: dto?.code,
+                    status: dto?.status,
                 } as CreateTransportDto);
             } else {
                 throw new ResourceNotFoundException(
@@ -117,19 +91,14 @@ export class TransportService {
             }
         }
 
-        const type = await this.transportTypeRepository.findOne({
-            name: dto.type,
-        });
         const status = await this.transportStatusRepository.findOne({
-            name: dto.status,
+            code: dto?.status,
         });
 
         return this.transportRepository.save({
             id: existingTransport?.id,
-            passCode: dto.passCode ?? existingTransport?.passCode,
-            studentId: dto.studentId ?? existingTransport?.studentId,
-            transportType: type ?? existingTransport?.transportType,
-            transportStatus: status ?? existingTransport?.transportStatus,
+            code: dto?.code ?? existingTransport?.code,
+            status: status ?? existingTransport?.status,
         } as TransportEntity);
     }
 
@@ -144,10 +113,8 @@ export class TransportService {
             if (isAllowCreate) {
                 return this.create({
                     plateNo,
-                    passCode: dto.passCode,
-                    studentId: dto.studentId,
-                    type: dto.type,
-                    status: dto.status,
+                    code: dto?.code,
+                    status: dto?.status,
                 } as CreateTransportDto);
             } else {
                 throw new ResourceNotFoundException(
@@ -156,19 +123,14 @@ export class TransportService {
             }
         }
 
-        const type = await this.transportTypeRepository.findOne({
-            name: dto.type,
-        });
         const status = await this.transportStatusRepository.findOne({
-            name: dto.status,
+            code: dto?.status,
         });
 
         return this.transportRepository.save({
             id: existingTransport?.id,
-            passCode: dto.passCode ?? existingTransport?.passCode,
-            studentId: dto.studentId ?? existingTransport?.studentId,
-            transportType: type ?? existingTransport?.transportType,
-            transportStatus: status ?? existingTransport?.transportStatus,
+            code: dto?.code ?? existingTransport?.code,
+            status: status ?? existingTransport?.status,
         } as TransportEntity);
     }
 }

@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
 import { StudentEntity } from 'src/app/student/repository/student.entity';
-import { TrafficErrorEntity } from 'src/app/traffic-error/repository/traffic-error.entity';
 import { TransportEntity } from 'src/app/transport/repository/transport.entity';
 import { UserEntity } from 'src/app/user/repository/user.entity';
 import {
@@ -12,7 +11,6 @@ import {
     OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ReportHistoryEntity } from './report-history.entity';
 import { ReportStatusEntity } from './report-status.entity';
 import { ReportTrafficErrorEntity } from './report-traffic-error.entity';
 
@@ -30,13 +28,13 @@ export class ReportEntity {
     @Expose()
     transportId: number;
 
-    @Column({ name: 'user_id' })
-    @Expose()
-    userId: number;
-
     @Column({ name: 'student_id' })
     @Expose()
     studentId: number;
+
+    @Column({ name: 'user_id' })
+    @Expose()
+    userId: number;
 
     @Column({ name: 'location' })
     @Expose()
@@ -52,35 +50,36 @@ export class ReportEntity {
 
     @OneToOne(() => ReportStatusEntity, { eager: true })
     @JoinColumn({ name: 'status_id' })
-    reportStatus: ReportStatusEntity;
+    status: ReportStatusEntity;
 
-    @OneToOne(() => TransportEntity, { eager: true })
-    @JoinColumn({ name: 'transport_id' })
-    reportTransport: TransportEntity;
-
-    @OneToOne(() => StudentEntity, { eager: true })
-    @JoinColumn({ name: 'student_id' })
-    reportStudent: StudentEntity;
-
-    @OneToMany(
-        () => ReportHistoryEntity,
-        (history: ReportHistoryEntity) => history.reportHistoryReport,
+    @ManyToOne(
+        () => TransportEntity,
+        (transport: TransportEntity) => transport.reports,
+        { eager: true },
     )
-    @JoinColumn({ name: 'id' })
-    reportHistories: ReportHistoryEntity[];
+    @JoinColumn({ name: 'transport_id' })
+    transport: TransportEntity;
+
+    @ManyToOne(
+        () => StudentEntity,
+        (student: StudentEntity) => student.reports,
+        { eager: true },
+    )
+    @JoinColumn({ name: 'student_id' })
+    student: StudentEntity;
 
     @ManyToOne(
         () => UserEntity,
         (user: UserEntity) => user.reports,
     )
     @JoinColumn({ name: 'user_id' })
-    reportUser: UserEntity;
+    user: UserEntity;
 
     @OneToMany(
         () => ReportTrafficErrorEntity,
         (reportTrafficError: ReportTrafficErrorEntity) =>
-            reportTrafficError.reportTrafficErrorReport,
+            reportTrafficError.report,
     )
     @JoinColumn({ name: 'id' })
-    reportReportTrafficErrors: TrafficErrorEntity[];
+    reportTrafficErrors: ReportTrafficErrorEntity[];
 }

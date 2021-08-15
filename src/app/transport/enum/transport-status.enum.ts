@@ -1,6 +1,4 @@
 export enum TransportStatus {
-    Na = 'na',
-    Summoned = 'summoned',
-    Locked = 'locked',
+    Hold = 'hold',
     Released = 'released',
 }

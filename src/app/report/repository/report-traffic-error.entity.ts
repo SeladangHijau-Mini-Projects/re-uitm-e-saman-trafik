@@ -23,10 +23,6 @@ export class ReportTrafficErrorEntity {
     @Expose()
     trafficErrorId: number;
 
-    @Column({ name: 'other_value' })
-    @Expose()
-    otherValue: string;
-
     @Column({ name: 'created_at' })
     @Expose()
     createdAt: Date;
@@ -37,18 +33,17 @@ export class ReportTrafficErrorEntity {
 
     @ManyToOne(
         () => ReportEntity,
-        (report: ReportEntity) => report.reportReportTrafficErrors,
+        (report: ReportEntity) => report.reportTrafficErrors,
         { eager: true },
     )
     @JoinColumn({ name: 'report_id' })
-    reportTrafficErrorReport: ReportEntity;
+    report: ReportEntity;
 
     @ManyToOne(
         () => TrafficErrorEntity,
-        (trafficError: TrafficErrorEntity) =>
-            trafficError.trafficErrorReportTrafficErrors,
+        (trafficError: TrafficErrorEntity) => trafficError.reportTrafficErrors,
         { eager: true },
     )
     @JoinColumn({ name: 'traffic_error_id' })
-    reportTrafficErrorTrafficError: TrafficErrorEntity;
+    trafficError: TrafficErrorEntity;
 }

@@ -14,12 +14,6 @@ export class TransportQueryFilter extends BaseQueryFilterBuilder {
         };
     }
 
-    typeId(value: number): object {
-        return {
-            typeId: value,
-        };
-    }
-
     statusId(value: number): object {
         return {
             statusId: value,

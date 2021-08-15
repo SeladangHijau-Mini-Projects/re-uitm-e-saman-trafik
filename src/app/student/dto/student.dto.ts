@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
 import { StudentEntity } from '../repository/student.entity';
 
-export class StudentDetailDto {
+export class StudentDto {
     @ApiProperty({ description: 'Student ID', example: 1 })
     @IsNumber()
     id: number;
@@ -21,11 +21,11 @@ export class StudentDetailDto {
     @IsString()
     name: string;
 
-    static fromModel(model: StudentEntity): StudentDetailDto {
+    static fromModel(model: StudentEntity): StudentDto {
         return {
             id: model?.id,
             code: model?.code,
             name: model?.name,
-        } as StudentDetailDto;
+        } as StudentDto;
     }
 }

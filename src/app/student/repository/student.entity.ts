@@ -1,15 +1,12 @@
 import { Expose } from 'class-transformer';
-import { TransportEntity } from 'src/app/transport/repository/transport.entity';
+import { ReportEntity } from 'src/app/report/repository/report.entity';
 import {
     Column,
     Entity,
     JoinColumn,
     OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CollegeEntity } from './college.entity';
-import { CourseEntity } from './course.entity';
 
 @Entity('students')
 export class StudentEntity {
@@ -17,21 +14,13 @@ export class StudentEntity {
     @Expose()
     id: number;
 
-    @Column({ name: 'course_id' })
+    @Column({ name: 'code' })
     @Expose()
-    courseId: number;
+    code: string;
 
-    @Column({ name: 'college_id' })
+    @Column({ name: 'name' })
     @Expose()
-    collegeId: number;
-
-    @Column({ name: 'student_code' })
-    @Expose()
-    studentCode: string;
-
-    @Column({ name: 'fullname' })
-    @Expose()
-    fullname: string;
+    name: string;
 
     @Column({ name: 'created_at' })
     @Expose()
@@ -41,18 +30,10 @@ export class StudentEntity {
     @Expose()
     updatedAt: Date;
 
-    @OneToOne(() => CourseEntity, { eager: true })
-    @JoinColumn({ name: 'course_id' })
-    studentCourse: CourseEntity;
-
-    @OneToOne(() => CollegeEntity, { eager: true })
-    @JoinColumn({ name: 'college_id' })
-    studentCollege: CollegeEntity;
-
     @OneToMany(
-        () => TransportEntity,
-        (transport: TransportEntity) => transport.transportStudent,
+        () => ReportEntity,
+        (report: ReportEntity) => report.student,
     )
     @JoinColumn({ name: 'id' })
-    studentTransports: TransportEntity[];
+    reports: ReportEntity[];
 }
