@@ -1,32 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { TransportStatus } from '../enum/transport-status.enum';
-import { TransportType } from '../enum/transport-type.enum';
 
 export class CreateTransportDto {
     @ApiProperty({
-        name: 'Student ID',
-        example: 1,
-    })
-    @IsNumber()
-    @IsOptional()
-    studentId: number;
-
-    @ApiProperty({
-        name: 'Transport type',
-        enum: TransportType,
-        example: TransportType.Car,
-    })
-    @IsEnum(TransportType)
-    type: string;
-
-    @ApiProperty({
         name: 'Transport status',
         enum: TransportStatus,
-        example: TransportStatus.Na,
+        example: TransportStatus.Hold,
     })
     @IsEnum(TransportStatus)
-    status: string = TransportStatus.Na;
+    status: string = TransportStatus.Hold;
+
+    @ApiProperty({
+        name: `Student's transport pass code`,
+        example: 'K123234W1234',
+    })
+    @IsString()
+    code: string;
 
     @ApiProperty({
         name: 'Transport plate no',
@@ -34,11 +24,4 @@ export class CreateTransportDto {
     })
     @IsString()
     plateNo: string;
-
-    @ApiProperty({
-        name: `Student's transport pass code`,
-        example: 'K123234W1234',
-    })
-    @IsString()
-    passCode: string;
 }

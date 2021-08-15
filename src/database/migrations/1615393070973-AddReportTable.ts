@@ -29,6 +29,7 @@ export class AddReportTable1615393070973 implements MigrationInterface {
                     {
                         name: 'student_id',
                         type: 'int',
+                        isNullable: true,
                     },
                     {
                         name: 'user_id',

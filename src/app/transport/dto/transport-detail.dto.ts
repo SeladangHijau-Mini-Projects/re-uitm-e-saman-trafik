@@ -11,7 +11,7 @@ export class TransportDetailDto {
     @ApiProperty({
         description: 'Transport status',
         enum: TransportStatus,
-        example: TransportStatus.Locked,
+        example: TransportStatus.Hold,
     })
     @IsEnum(TransportStatus)
     status: string;

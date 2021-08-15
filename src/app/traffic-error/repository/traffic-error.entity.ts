@@ -14,13 +14,9 @@ export class TrafficErrorEntity {
     @Expose()
     id: number;
 
-    @Column({ name: 'group_id' })
+    @Column({ name: 'code' })
     @Expose()
-    groupId: number;
-
-    @Column({ name: 'name' })
-    @Expose()
-    name: string;
+    code: string;
 
     @Column({ name: 'description' })
     @Expose()

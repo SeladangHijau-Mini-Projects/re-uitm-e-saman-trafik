@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-extra-parens */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
 import { TrafficErrorService } from '../traffic-error/traffic-error.service';
+import { CreateTransportDto } from '../transport/dto/create-transport.dto';
 import { TransportService } from '../transport/transport.service';
+import { UserEntity } from '../user/repository/user.entity';
 import { UserService } from '../user/user.service';
 import { CreateReportDto } from './dto/create-report.dto';
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
@@ -66,14 +70,14 @@ export class ReportService {
         }
 
         const query = new ReportQueryFilter(dto).toTypeormQuery();
-        query.relations = ['reportHistories', 'reportReportTrafficErrors'];
+        query.relations = ['reportTrafficErrors'];
 
         return this.reportRepository.find(query);
     }
 
     async findOne(reportId: number): Promise<ReportEntity> {
         return this.reportRepository.findOne(reportId, {
-            relations: ['reportHistories', 'reportReportTrafficErrors'],
+            relations: ['reportTrafficErrors'],
         });
     }
 
@@ -85,18 +89,44 @@ export class ReportService {
         return this.reportStatusRepository.find();
     }
 
-    async create(dto: CreateReportDto): Promise<ReportEntity> {
-        const status = await this.reportStatusRepository.findOne({
-            code: dto.status,
-        });
+    async create(
+        user: UserEntity,
+        dto: CreateReportDto,
+    ): Promise<ReportEntity> {
+        // validate & create student
+        let student = await this.studentService.findOneByStudentCode(
+            dto?.studentCode,
+        );
+        student =
+            !student && dto?.studentCode && dto?.studentName
+                ? await this.studentService.create({
+                      code: dto?.studentCode,
+                      name: dto?.studentName,
+                  } as CreateStudentDto)
+                : student;
+
+        // validate & create transport
+        let transport = await this.transportService.findOneByPlateNo(
+            dto?.transportPlateNo,
+        );
+        transport = !transport
+            ? await this.transportService.create({
+                  plateNo: dto?.transportPlateNo,
+                  code: dto?.transportCode,
+                  status: dto?.transportStatus,
+              } as CreateTransportDto)
+            : transport;
 
         // create new report
+        const status = await this.reportStatusRepository.findOne({
+            code: dto?.status,
+        });
         const report = await this.reportRepository.save({
             status,
-            transportId: dto.transportId,
-            userId: dto.userId,
-            studentId: dto.studentId,
-            location: dto.location,
+            location: dto?.location,
+            user,
+            transport,
+            student,
         } as ReportEntity);
 
         // create new report history
@@ -104,11 +134,11 @@ export class ReportService {
             // create traffic error
             await this.trafficErrorService.createAll(
                 report.id,
-                dto.trafficErrorList,
+                dto.trafficErrors,
             );
         }
 
-        return report;
+        return this.reportRepository.findOne(report?.id);
     }
 
     async update(

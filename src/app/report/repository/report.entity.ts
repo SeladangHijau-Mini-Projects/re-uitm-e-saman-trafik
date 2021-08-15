@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
 import { StudentEntity } from 'src/app/student/repository/student.entity';
-import { TrafficErrorEntity } from 'src/app/traffic-error/repository/traffic-error.entity';
 import { TransportEntity } from 'src/app/transport/repository/transport.entity';
 import { UserEntity } from 'src/app/user/repository/user.entity';
 import {
@@ -56,6 +55,7 @@ export class ReportEntity {
     @ManyToOne(
         () => TransportEntity,
         (transport: TransportEntity) => transport.reports,
+        { eager: true },
     )
     @JoinColumn({ name: 'transport_id' })
     transport: TransportEntity;
@@ -63,6 +63,7 @@ export class ReportEntity {
     @ManyToOne(
         () => StudentEntity,
         (student: StudentEntity) => student.reports,
+        { eager: true },
     )
     @JoinColumn({ name: 'student_id' })
     student: StudentEntity;
@@ -80,5 +81,5 @@ export class ReportEntity {
             reportTrafficError.report,
     )
     @JoinColumn({ name: 'id' })
-    reportTrafficErrors: TrafficErrorEntity[];
+    reportTrafficErrors: ReportTrafficErrorEntity[];
 }

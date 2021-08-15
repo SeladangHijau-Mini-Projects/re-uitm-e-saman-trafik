@@ -23,8 +23,8 @@ export class StudentService {
 
     async create(dto: CreateStudentDto): Promise<StudentEntity> {
         return this.studentRepository.save({
-            code: dto.studentCode,
-            name: dto.fullname,
+            code: dto?.code,
+            name: dto?.name,
         } as StudentEntity);
     }
 
@@ -38,10 +38,8 @@ export class StudentService {
         if (!existingStudent) {
             if (isAllowCreate) {
                 return this.create({
-                    studentCode: dto.studentCode,
-                    fullname: dto.fullname,
-                    college: dto.college,
-                    course: dto.course,
+                    code: dto?.code,
+                    name: dto?.name,
                 } as CreateStudentDto);
             } else {
                 throw new ResourceNotFoundException(
@@ -52,35 +50,33 @@ export class StudentService {
 
         return this.studentRepository.save({
             id: existingStudent?.id,
-            name: dto?.fullname ?? existingStudent?.name,
+            name: dto?.name ?? existingStudent?.name,
         } as StudentEntity);
     }
 
     async updateByStudentCode(
-        studentCode: string,
+        code: string,
         dto: UpdateStudentDto,
         isAllowCreate: boolean = true,
     ): Promise<StudentEntity> {
         // if student not exist, create new student
-        const existingStudent = await this.findOneByStudentCode(studentCode);
+        const existingStudent = await this.findOneByStudentCode(code);
         if (!existingStudent) {
             if (isAllowCreate) {
                 return this.create({
-                    studentCode,
-                    fullname: dto.fullname,
-                    college: dto.college,
-                    course: dto.course,
+                    code,
+                    name: dto?.name,
                 } as CreateStudentDto);
             } else {
                 throw new ResourceNotFoundException(
-                    `Student code (${studentCode}) not found.`,
+                    `Student code (${code}) not found.`,
                 );
             }
         }
 
         return this.studentRepository.save({
             id: existingStudent?.id,
-            name: dto?.fullname ?? existingStudent?.name,
+            name: dto?.name ?? existingStudent?.name,
         } as StudentEntity);
     }
 }

@@ -20,17 +20,17 @@ export class TrafficErrorService {
         return this.trafficErrorRepository.find();
     }
 
-    async findByNameList(nameList: string[]): Promise<TrafficErrorEntity[]> {
+    async findByNameList(codeList: string[]): Promise<TrafficErrorEntity[]> {
         const trafficErrorList = [];
 
-        for await (const name of nameList) {
+        for await (const code of codeList) {
             const trafficError = await this.trafficErrorRepository.findOne({
-                name,
+                code,
             });
 
             if (!trafficError) {
                 throw new ResourceNotFoundException(
-                    `Traffic Error '${name}' was not found.`,
+                    `Traffic Error '${code}' was not found.`,
                 );
             }
 

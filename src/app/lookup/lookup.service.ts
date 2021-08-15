@@ -65,7 +65,7 @@ export class Lookupservice {
                     (error: TrafficErrorEntity) =>
                         ({
                             label: error.description,
-                            value: error.name,
+                            value: error.code,
                         } as LookupDto),
                 );
             default:

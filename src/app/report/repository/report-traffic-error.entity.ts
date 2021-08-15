@@ -23,10 +23,6 @@ export class ReportTrafficErrorEntity {
     @Expose()
     trafficErrorId: number;
 
-    @Column({ name: 'other_value' })
-    @Expose()
-    otherValue: string;
-
     @Column({ name: 'created_at' })
     @Expose()
     createdAt: Date;

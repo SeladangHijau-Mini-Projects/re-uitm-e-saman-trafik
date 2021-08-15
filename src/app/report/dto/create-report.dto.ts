@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { TransportStatus } from 'src/app/transport/enum/transport-status.enum';
 import { ReportStatus } from '../enum/report-status.enum';
 
 export class CreateReportDto {
@@ -8,30 +9,9 @@ export class CreateReportDto {
         enum: ReportStatus,
         example: ReportStatus.New,
     })
-    @IsEnum(ReportStatus)
-    status: string;
-
-    @ApiProperty({
-        name: 'Transport ID',
-        example: 1,
-    })
-    @IsNumber()
-    transportId: number;
-
-    @ApiProperty({
-        name: 'User ID',
-        example: 1,
-    })
-    @IsNumber()
-    userId: number;
-
-    @ApiProperty({
-        name: 'Student ID',
-        example: 1,
-    })
-    @IsNumber()
     @IsOptional()
-    studentId: number;
+    @IsEnum(ReportStatus)
+    status: ReportStatus = ReportStatus.New;
 
     @ApiProperty({
         name: 'Location',
@@ -41,13 +21,45 @@ export class CreateReportDto {
     location: string;
 
     @ApiProperty({
-        name: 'Report remark',
-        example: 'UiTM',
+        name: 'Transport Plate No',
+        example: 'QWE 123',
     })
     @IsString()
-    remark: string;
+    transportPlateNo: string;
+
+    @ApiProperty({
+        name: 'Transport pass code',
+        example: 'QWE 123',
+    })
+    @IsOptional()
+    @IsString()
+    transportCode: string;
+
+    @ApiProperty({
+        name: 'Transport Status',
+        example: TransportStatus.Hold,
+    })
+    @IsOptional()
+    @IsEnum(TransportStatus)
+    transportStatus: TransportStatus = TransportStatus.Hold;
+
+    @ApiProperty({
+        name: 'Student code',
+        example: '2015125573',
+    })
+    @IsString()
+    @IsOptional()
+    studentCode: string;
+
+    @ApiProperty({
+        name: 'Student name',
+        example: 'Muhammad Nadzmi Bin Mohamed Idzham',
+    })
+    @IsString()
+    @IsOptional()
+    studentName: string;
 
     @ApiProperty({ name: 'Traffic error name' })
     @IsString({ each: true })
-    trafficErrorList: string[];
+    trafficErrors: string[];
 }

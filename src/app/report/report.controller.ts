@@ -8,25 +8,22 @@ import {
     Put,
     Query,
     UseGuards,
+    Headers,
 } from '@nestjs/common';
-import { CreateStudentDto } from '../student/dto/create-student.dto';
 import { StudentService } from '../student/student.service';
 import { TransportService } from '../transport/transport.service';
-import { SubmitReportDto } from './dto/submit-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { ReportService } from './report.service';
-import { CreateTransportDto } from '../transport/dto/create-transport.dto';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UserService } from '../user/user.service';
 import { ResourceNotFoundException } from 'src/common/exception/resource-not-found.exception';
 import { ReportQueryParamDto } from './dto/report-query-param.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guard/auth.guard';
-import { ReportSummaryDto } from './dto/report-summary.dto';
-import { ReportDetailDto } from './dto/report-detail.dto';
-import { UpdateStudentDto } from '../student/dto/update-student.dto';
+import { ReportDto } from './dto/report.dto';
 import { UpdateTransportDto } from '../transport/dto/update-transport.dto';
 import { PaginationBuilder } from 'src/common/pagination/builder.pagination';
+import * as jwt from 'jsonwebtoken';
 
 @ApiTags('Report')
 @UseGuards(AuthGuard)
@@ -44,13 +41,13 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: [ReportSummaryDto],
+        type: [ReportDto],
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async find(
         @Query() query: ReportQueryParamDto,
-    ): Promise<ReportSummaryDto[] | PaginationBuilder> {
+    ): Promise<ReportDto[] | PaginationBuilder> {
         // pagination logic
         if (query?.paginationMeta) {
             const tempLimit = query?.limit;
@@ -67,7 +64,7 @@ export class ReportController {
 
         const reportList = await this.reportService.findAll(query);
 
-        return reportList.map(ReportSummaryDto.fromModel);
+        return reportList.map(ReportDto.fromModel);
     }
 
     @Get(':reportId')
@@ -75,20 +72,20 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: ReportDetailDto,
+        type: ReportDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async findOne(
         @Param('reportId', ParseIntPipe) reportId: number,
-    ): Promise<ReportDetailDto> {
+    ): Promise<ReportDto> {
         const report = await this.reportService.findOne(reportId);
 
         if (!report) {
             throw new ResourceNotFoundException('Report ID not found.');
         }
 
-        return ReportDetailDto.fromModel(report);
+        return ReportDto.fromModel(report);
     }
 
     @Post()
@@ -96,60 +93,28 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: ReportDetailDto,
+        type: ReportDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-    async create(@Body() body: SubmitReportDto): Promise<ReportDetailDto> {
+    async create(
+        @Headers('authorization') auth: string,
+        @Body() body: CreateReportDto,
+    ): Promise<ReportDto> {
         // validate user
-        const user = await this.userService.findOne(body.userId);
+        const authPayload = jwt.decode(auth);
+        const userid = authPayload['userId'];
+        const user = await this.userService.findOne(userid);
         if (!user) {
             throw new ResourceNotFoundException('User ID was not found.');
         }
 
-        // validate & create student
-        let student = null;
-        if (body.studentCode) {
-            student = await this.studentService.findOneByStudentCode(
-                body.studentCode,
-            );
-
-            if (!student) {
-                student = await this.studentService.create({
-                    course: body.studentCourse,
-                    college: body.studentCollege,
-                    studentCode: body.studentCode,
-                    fullname: body.studentFullname,
-                } as CreateStudentDto);
-            }
-        }
-
-        // validate & create transport
-        let transport = await this.transportService.findOneByPlateNo(
-            body.transportPlateNo,
-        );
-        if (!transport) {
-            transport = await this.transportService.create({
-                studentId: student?.id ?? null,
-                plateNo: body.transportPlateNo,
-                passCode: body.transportPassCode,
-                type: body.transportType,
-                status: body?.transportStatus,
-            } as CreateTransportDto);
-        }
-
         // create report
-        const newReport = await this.reportService.create({
-            transportId: transport?.id,
-            studentId: student?.id,
-            location: body?.location,
-            remark: body?.remark,
-            status: body?.status,
-            userId: user?.id,
-            trafficErrorList: body?.trafficErrors,
-        } as CreateReportDto);
+        const newReport = await this.reportService.create(user, body);
 
-        return ReportDetailDto.fromModel(
+        console.log('newReport: ', newReport);
+
+        return ReportDto.fromModel(
             await this.reportService.findOne(newReport.id),
         );
     }
@@ -159,14 +124,14 @@ export class ReportController {
     @ApiResponse({
         status: 200,
         description: 'Success',
-        type: ReportDetailDto,
+        type: ReportDto,
     })
     @ApiResponse({ status: 401, description: 'Unauthorized.' })
     @ApiResponse({ status: 500, description: 'Internal Server Error.' })
     async update(
         @Param('reportId', ParseIntPipe) reportId: number,
         @Body() body: UpdateReportDto,
-    ): Promise<ReportDetailDto> {
+    ): Promise<ReportDto> {
         // validate report
         const report = await this.reportService.findOne(reportId);
         if (!report) {
@@ -189,60 +154,57 @@ export class ReportController {
             throw new ResourceNotFoundException('User ID not found.');
         }
 
-        // validate or create student
-        const student = body?.studentCode
-            ? await this.studentService.updateByStudentCode(body.studentCode, {
-                  fullname: body.studentFullname,
-                  course: body.studentCourse,
-                  college: body.studentCollege,
-              } as UpdateStudentDto)
-            : report?.studentId
-            ? await this.studentService.update(report?.studentId, {
-                  fullname: body.studentFullname,
-                  course: body.studentCourse,
-                  college: body.studentCollege,
-              } as UpdateStudentDto)
-            : null;
-        if (!student && body.studentCode) {
-            throw new ResourceNotFoundException('Student not found.');
-        }
+        // TODO: fix this
+        // // validate or create student
+        // const student = body?.studentCode
+        //     ? await this.studentService.updateByStudentCode(body.studentCode, {
+        //           fullname: body.studentFullname,
+        //           course: body.studentCourse,
+        //           college: body.studentCollege,
+        //       } as UpdateStudentDto)
+        //     : report?.studentId
+        //     ? await this.studentService.update(report?.studentId, {
+        //           fullname: body.studentFullname,
+        //           course: body.studentCourse,
+        //           college: body.studentCollege,
+        //       } as UpdateStudentDto)
+        //     : null;
+        // if (!student && body.studentCode) {
+        //     throw new ResourceNotFoundException('Student not found.');
+        // }
 
         // validate or create transport
         const transport = body?.transportPlateNo
             ? await this.transportService.updateByPlateNo(
                   body?.transportPlateNo,
                   {
-                      passCode: body.transportPassCode,
-                      studentId: student?.id,
+                      code: body.transportCode,
                       status: body.transportStatus,
-                      type: body.transportType,
                   } as UpdateTransportDto,
               )
             : report?.transportId
             ? await this.transportService.update(report?.transportId, {
-                  passCode: body.transportPassCode,
-                  studentId: student?.id,
+                  code: body.transportCode,
                   status: body.transportStatus,
-                  type: body.transportType,
               } as UpdateTransportDto)
             : null;
         if (!transport) {
             throw new ResourceNotFoundException('Transport was not found.');
         }
 
-        // update report
-        await this.reportService.update(report.id, {
-            userId: user?.id ?? report.userId,
-            status: status?.code ?? report.status.code,
-            studentId: student?.id ?? report.studentId,
-            transportId: transport?.id ?? report.transportId,
-            location: body.location ?? report.location,
-            remark: body.remark,
-            trafficErrors: body.trafficErrors,
-        } as UpdateReportDto);
+        // TODO: fix this
+        // // update report
+        // await this.reportService.update(report.id, {
+        //     userId: user?.id ?? report.userId,
+        //     status: status?.code ?? report.status.code,
+        //     studentId: student?.id ?? report.studentId,
+        //     transportId: transport?.id ?? report.transportId,
+        //     location: body.location ?? report.location,
+        //     remark: body.remark,
+        //     trafficErrors: body.trafficErrors,
+        // } as UpdateReportDto);
 
-        return ReportDetailDto.fromModel(
-            await this.reportService.findOne(reportId),
-        );
+        // return ReportDto.fromModel(await this.reportService.findOne(reportId));
+        return null;
     }
 }

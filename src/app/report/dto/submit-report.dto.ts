@@ -51,11 +51,11 @@ export class SubmitReportDto {
     @ApiProperty({
         description: 'Student transport status',
         enum: TransportStatus,
-        example: TransportStatus.Na,
+        example: TransportStatus.Hold,
     })
     @IsEnum(TransportStatus)
     @IsOptional()
-    transportStatus: string = TransportStatus.Na;
+    transportStatus: string = TransportStatus.Hold;
 
     @ApiProperty({
         description: 'Traffic errors',

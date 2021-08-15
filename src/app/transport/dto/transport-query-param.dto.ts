@@ -24,7 +24,7 @@ export class TransportQueryParamDto extends BaseQueryParamDTO {
         required: false,
         description: 'Transport status',
         enum: TransportStatus,
-        example: TransportStatus.Locked,
+        example: TransportStatus.Hold,
     })
     @IsEnum(TransportStatus)
     @IsOptional()
